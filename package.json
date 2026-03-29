@@ -1,0 +1,15 @@
+{
+  "name": "away-landing-page",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "python -m http.server 8080",
+    "dev": "python -m http.server 8081",
+    "lint": "htmlhint *.html",
+    "test": "npm run lint",
+    "build": "echo 'No build step required for static LP'"
+  },
+  "devDependencies": {
+    "htmlhint": "^1.9.2"
+  }
+}

@@ -1,0 +1,145 @@
+/* AWAY Landing Page - Core Styles */
+
+:root {
+  --color-indigo: #6366f1;
+  --color-indigo-dark: #4f46e5;
+  --color-violet: #8b5cf6;
+  --color-slate-900: #0f172a;
+  --color-slate-500: #64748b;
+  --color-slate-200: #e2e8f0;
+  --color-bg: #f8fafc;
+}
+
+html {
+  scroll-padding-top: 80px;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* 1. ANIMATIONS */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.8s ease-out forwards;
+}
+
+/* 2. GLASSMORPHISM */
+.glass-card {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 10px 40px rgba(99, 102, 241, 0.05);
+  transition: all 0.3s ease;
+}
+
+.glass-card:hover {
+  border-color: rgba(99, 102, 241, 0.2);
+  transform: translateY(-4px);
+  box-shadow: 0 20px 60px rgba(99, 102, 241, 0.1);
+}
+
+/* 3. GRADIENT TEXT */
+.gradient-text {
+  background: linear-gradient(135deg, var(--color-indigo), var(--color-violet));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* 4. REVEAL SYSTEM */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.8s ease-out, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.reveal--visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* 5. HERO ORBS */
+.orb-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(100px);
+  opacity: 0.15;
+  will-change: transform;
+}
+
+/* 6. ROI SLIDER (CUSTOM) */
+#roi input[type=range] {
+  -webkit-appearance: none;
+  background: transparent;
+}
+
+#roi input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  height: 24px;
+  width: 24px;
+  border-radius: 50%;
+  background: #fff;
+  border: 2px solid var(--color-indigo);
+  cursor: pointer;
+  box-shadow: 0 0 15px rgba(99, 102, 241, 0.3);
+  margin-top: -10px;
+}
+
+#roi input[type=range]::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+}
+
+/* 7. PREVIEW MOCKUP */
+.preview-window {
+  border-radius: 24px;
+  background: #fff;
+  box-shadow: 0 40px 100px rgba(15, 23, 42, 0.15);
+  border: 1px solid rgba(15, 23, 42, 0.05);
+  overflow: hidden;
+}
+
+/* 8. BENTO GRID ENHANCEMENTS */
+.bento-card {
+  display: flex;
+  flex-direction: column;
+  padding: 32px;
+  border-radius: 32px;
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.bento-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 30px 60px rgba(99, 102, 241, 0.1);
+  border-color: rgba(99, 102, 241, 0.2);
+}
+
+/* ── Mobile Layout Adjustments ── */
+@media (max-width: 768px) {
+  .hero-title { font-size: 3.5rem; }
+}

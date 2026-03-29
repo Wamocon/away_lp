@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="de" class="scroll-smooth">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AWAY – Moderner Urlaubsplaner | Team-Synchronisation & Automatisierung</title>
+  <meta name="description"
+    content="AWAY – Der intelligente Urlaubsplaner für moderne Teams. Kalender-Synchronisation mit Outlook & Google, Multi-Organisation, automatisierte Workflows und GDPR-konform. Powered by Supabase.">
+  <meta name="theme-color" content="#f5f5f7">
+  <meta property="og:title" content="AWAY – Urlaubsplanung neu gedacht">
+  <meta property="og:description" content="Vergiss Excel-Chaos. AWAY automatisiert deine Urlaubsanträge, synchronisiert Kalender und optimiert die Team-Kapazität.">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="de_DE">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <style type="text/tailwindcss">
+    @theme {
+      --color-bg: #f8fafc;
+      --color-bg-alt: #f1f5f9;
+      --color-surface: #ffffff;
+      --color-surface-hover: #f1f5f9;
+      --color-border: rgba(0,0,0,.06);
+      --color-border-hover: rgba(99,102,241,.2);
+      --color-accent: #6366f1;
+      --color-accent-dim: #4f46e5;
+      --color-accent-soft: rgba(99,102,241,.08);
+      --color-text-main: #0f172a;
+      --color-muted: #475569;
+      --color-faint: #94a3b8;
+      --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+      --font-display: 'Outfit', sans-serif;
+    }
+    body { font-family: var(--font-sans); background: var(--color-bg); color: var(--color-text-main); }
+    h1, h2, h3, .font-display { font-family: var(--font-display); }
+    
+    .gradient-text { background: linear-gradient(135deg, #6366f1, #a855f7); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+    .glass-card { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(12px) saturate(180%); border: 1px solid rgba(255, 255, 255, 0.3); box-shadow: 0 8px 32px rgba(31, 38, 135, 0.07); }
+    
+    /* Reveal Animation Override for AWAY */
+    .reveal { opacity: 0; transform: translateY(20px); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+    .reveal--visible { opacity: 1; transform: translateY(0); }
+
+    /* Custom Ticker / Marquee */
+    .marquee-track { animation: marquee 30s linear infinite; }
+    @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+    /* ROI Slider Customization */
+    input[type=range] { appearance: none; width: 100%; background: transparent; }
+    input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 8px; cursor: pointer; background: #e2e8f0; border-radius: 4px; }
+    input[type=range]::-webkit-slider-thumb { height: 24px; width: 24px; border-radius: 50%; background: #6366f1; cursor: pointer; appearance: none; margin-top: -8px; box-shadow: 0 4px 12px rgba(99,102,241,0.3); border: 2px solid white; transition: transform 0.2s; }
+    input[type=range]:active::-webkit-slider-thumb { transform: scale(1.2); }
+  </style>
+</head>
+
+<body class="overflow-x-hidden antialiased">
+
+  <!-- Header / Nav -->
+  <header id="nav" class="fixed top-0 left-0 right-0 z-[100] transition-all duration-300 py-4">
+    <div class="max-w-7xl mx-auto px-6 flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <div class="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-200">
+           <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+        </div>
+        <span class="text-2xl font-bold tracking-tight text-slate-900 font-display">AWAY</span>
+      </div>
+      
+      <nav class="hidden md:flex items-center gap-1 bg-white/50 backdrop-blur-md border border-slate-200/50 rounded-full px-2 py-1.5 shadow-sm">
+        <a href="#features" class="px-4 py-2 text-sm font-medium text-slate-600 hover:text-indigo-600 transition-colors uppercase tracking-wider">Features</a>
+        <a href="#roi" class="px-4 py-2 text-sm font-medium text-slate-600 hover:text-indigo-600 transition-colors uppercase tracking-wider">ROI Rechner</a>
+        <a href="#innovation" class="px-4 py-2 text-sm font-medium text-slate-600 hover:text-indigo-600 transition-colors uppercase tracking-wider">Innovation</a>
+        <a href="#pricing" class="px-4 py-2 text-sm font-medium text-slate-600 hover:text-indigo-600 transition-colors uppercase tracking-wider">Preise</a>
+      </nav>
+
+      <div>
+        <a href="#login" class="bg-indigo-600 text-white px-6 py-2.5 rounded-full font-semibold text-sm hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-200 active:scale-95">Jetzt Starten</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section id="hero" class="relative pt-40 pb-32 overflow-hidden">
+    <!-- Animated Orbs -->
+    <div class="absolute top-0 left-1/4 w-96 h-96 bg-indigo-400/20 blur-[120px] rounded-full animate-pulse"></div>
+    <div class="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-purple-400/10 blur-[120px] rounded-full"></div>
+
+    <div class="max-w-7xl mx-auto px-6 text-center relative z-10">
+      <div class="inline-flex items-center gap-2 bg-indigo-50 border border-indigo-100 px-4 py-2 rounded-full mb-8 reveal">
+        <span class="flex h-2 w-2 rounded-full bg-indigo-500 animate-ping"></span>
+        <span class="text-indigo-700 text-xs font-bold uppercase tracking-widest">Neu: Kalender Sync 2.0</span>
+      </div>
+      
+      <h1 class="text-6xl md:text-8xl font-black text-slate-900 mb-8 tracking-tight font-display reveal">
+        Urlaub planen. <br/>
+        <span class="gradient-text">Einfach weg sein.</span>
+      </h1>
+      
+      <p class="max-w-2xl mx-auto text-lg text-slate-500 mb-12 leading-relaxed reveal">
+        AWAY automatisiert die Urlaubsplanung für moderne Teams. Synchronisiere Outlook & Google, verwalte Organisationen und sag Excel den Kampf ans.
+      </p>
+
+      <div class="flex flex-wrap items-center justify-center gap-4 reveal">
+        <button class="bg-slate-900 text-white px-10 py-5 rounded-2xl font-bold text-lg hover:bg-slate-800 transition-all shadow-xl active:scale-95">Demo anfordern</button>
+        <button class="bg-white text-slate-900 border border-slate-200 px-10 py-5 rounded-2xl font-bold text-lg hover:bg-slate-50 transition-all shadow-sm active:scale-95">Features entdecken</button>
+      </div>
+
+      <!-- App Preview Mockup -->
+      <div class="mt-24 relative max-w-5xl mx-auto reveal group">
+        <div class="absolute inset-0 bg-gradient-to-t from-indigo-500 to-purple-600 blur-3xl opacity-20 group-hover:opacity-30 transition-opacity"></div>
+        <div class="border-4 border-slate-900 rounded-[32px] overflow-hidden shadow-2xl bg-white aspect-video relative">
+            <!-- Mock UI Elements -->
+            <div class="absolute inset-0 bg-slate-50 flex flex-col p-8">
+                <div class="flex items-center justify-between mb-8">
+                    <div class="flex gap-4">
+                        <div class="w-12 h-12 bg-indigo-100 rounded-lg"></div>
+                        <div class="space-y-2">
+                            <div class="w-32 h-4 bg-slate-200 rounded"></div>
+                            <div class="w-20 h-3 bg-slate-100 rounded"></div>
+                        </div>
+                    </div>
+                    <div class="flex gap-2">
+                        <div class="w-24 h-8 bg-indigo-600 rounded-md"></div>
+                        <div class="w-8 h-8 bg-slate-200 rounded-full"></div>
+                    </div>
+                </div>
+                <!-- Grid of Vacation Cards -->
+                <div class="grid grid-cols-3 gap-6">
+                    <div class="h-40 bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+                        <div class="w-full h-4 bg-indigo-50 rounded mb-4"></div>
+                        <div class="flex items-center gap-2 mb-4">
+                            <div class="w-6 h-6 rounded-full bg-slate-100"></div>
+                            <div class="w-16 h-3 bg-slate-100 rounded"></div>
+                        </div>
+                        <div class="w-24 h-6 bg-green-100 rounded-full"></div>
+                    </div>
+                    <div class="h-40 bg-white border border-slate-200 rounded-2xl p-4 shadow-sm border-indigo-200 ring-2 ring-indigo-50">
+                        <div class="w-full h-4 bg-indigo-50 rounded mb-4"></div>
+                        <div class="flex items-center gap-2 mb-4">
+                            <div class="w-6 h-6 rounded-full bg-slate-100"></div>
+                            <div class="w-16 h-3 bg-slate-100 rounded"></div>
+                        </div>
+                        <div class="w-24 h-6 bg-yellow-100 rounded-full"></div>
+                    </div>
+                     <div class="h-40 bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+                        <div class="w-full h-4 bg-indigo-50 rounded mb-4"></div>
+                        <div class="flex items-center gap-2 mb-4">
+                            <div class="w-6 h-6 rounded-full bg-slate-100"></div>
+                            <div class="w-16 h-3 bg-slate-100 rounded"></div>
+                        </div>
+                        <div class="w-24 h-6 bg-blue-100 rounded-full"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- Interactive Floating Overlay -->
+            <div class="absolute bottom-10 right-10 bg-white p-4 rounded-2xl shadow-2xl border border-indigo-100 animate-bounce">
+                <div class="flex items-center gap-3">
+                    <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                    <span class="text-sm font-bold text-slate-700">Antrag genehmigt!</span>
+                </div>
+            </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Innovation: ROI Calculator Section -->
+  <section id="roi" class="py-32 bg-slate-900 text-white overflow-hidden relative">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="grid md:grid-cols-2 gap-20 items-center">
+            <div class="reveal">
+                <h2 class="text-5xl font-bold font-display mb-6 tracking-tight">Wie viel Zeit <br/>verschwendet ihr?</h2>
+                <p class="text-slate-400 text-lg mb-10">Berechnet die Zeitersparnis durch AWAY. Automatisierte Anträge, direkte Kalender-Synchronisation und weniger E-Mail-Ping-Pong.</p>
+                
+                <div class="space-y-12">
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center">
+                            <label class="text-sm font-bold uppercase tracking-widest text-indigo-400">Anzahl Mitarbeiter</label>
+                            <span id="employee-count-label" class="text-2xl font-bold">50</span>
+                        </div>
+                        <input type="range" id="employee-slider" min="10" max="1000" value="50">
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center">
+                            <label class="text-sm font-bold uppercase tracking-widest text-indigo-400">Anträge pro Jahr (Ø)</label>
+                            <span id="request-count-label" class="text-2xl font-bold">5</span>
+                        </div>
+                        <input type="range" id="request-slider" min="1" max="12" value="5">
+                    </div>
+                </div>
+            </div>
+
+            <div class="relative reveal">
+                <div class="absolute inset-0 bg-indigo-600 blur-[100px] opacity-20"></div>
+                <div class="bg-slate-800/80 backdrop-blur-xl border border-slate-700 p-12 rounded-[40px] text-center shadow-2xl">
+                    <div class="text-indigo-400 font-bold uppercase tracking-widest mb-4">Eure jährliche Ersparnis</div>
+                    <div id="savings-value" class="text-7xl font-black mb-4 font-display">12.500 €</div>
+                    <div class="text-slate-400 mb-10">entspricht ca. <span id="hours-value" class="text-white font-bold">250 Arbeitsstunden</span> pro Jahr.</div>
+                    <button class="w-full bg-indigo-600 py-4 rounded-2xl font-bold hover:bg-indigo-500 transition-all shadow-lg shadow-indigo-600/20">Jetzt Zeit sparen</button>
+                    
+                    <div class="mt-8 flex justify-center gap-6">
+                        <div class="flex flex-col items-center">
+                            <span class="text-xs text-slate-500 uppercase font-bold">ROI</span>
+                            <span class="text-green-400 font-bold">14x</span>
+                        </div>
+                         <div class="flex flex-col items-center">
+                            <span class="text-xs text-slate-500 uppercase font-bold">Break-Even</span>
+                            <span class="text-white font-bold">2 Mon.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+  </section>
+
+  <!-- Features Bento Grid -->
+  <section id="features" class="py-32">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="text-center mb-20 reveal">
+            <h2 class="text-4xl md:text-5xl font-black text-slate-900 mb-4 font-display tracking-tight">Alles was euer Team braucht.</h2>
+            <p class="text-slate-500 text-lg">Keine Kompromisse. Nur die besten Tools für eure Planung.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Bento Box 1: Large -->
+            <div class="md:col-span-2 glass-card rounded-[32px] p-10 flex flex-col justify-between hover:border-indigo-200 transition-colors group reveal">
+                <div>
+                   <div class="w-14 h-14 bg-indigo-600 rounded-2xl flex items-center justify-center mb-8 shadow-lg shadow-indigo-100 group-hover:scale-110 transition-transform">
+                       <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                   </div>
+                   <h3 class="text-3xl font-bold mb-4">Intelligenter Kalender-Sync</h3>
+                   <p class="text-slate-500 text-lg max-w-md">Verbinde AWAY mit Outlook oder Google Kalender. Urlaube werden automatisch eingetragen und Team-Einladungen generiert. Kein manuelles Kopieren mehr.</p>
+                </div>
+                <div class="mt-12 overflow-hidden rounded-2xl border border-slate-100 shadow-sm transition-transform group-hover:translate-y-2">
+                    <img src="https://images.unsplash.com/photo-1506784983877-45594efa4cbe?auto=format&fit=crop&q=80&w=800" alt="Kalender Sync" class="w-full h-48 object-cover object-top opacity-80 group-hover:opacity-100 transition-opacity">
+                </div>
+            </div>
+
+            <!-- Bento Box 2: Small -->
+            <div class="glass-card rounded-[32px] p-10 flex flex-col justify-between hover:border-indigo-200 transition-colors group reveal">
+                <div>
+                   <div class="w-14 h-14 bg-white border border-slate-200 rounded-2xl flex items-center justify-center mb-8 shadow-sm group-hover:scale-110 transition-transform">
+                       <svg class="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                   </div>
+                   <h3 class="text-2xl font-bold mb-4">Enterprise Security</h3>
+                   <p class="text-slate-500">Supabase Auth, rollenbasierte Zugriffssteuerung und 100% DSGVO-konform. Deine Daten sind sicher.</p>
+                </div>
+            </div>
+
+             <!-- Bento Box 3: Medium -->
+             <div class="glass-card rounded-[32px] p-10 flex flex-col justify-between hover:border-indigo-200 transition-colors group reveal">
+                <div>
+                   <div class="w-14 h-14 bg-white border border-slate-200 rounded-2xl flex items-center justify-center mb-8 shadow-sm group-hover:scale-110 transition-transform">
+                       <svg class="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                   </div>
+                   <h3 class="text-2xl font-bold mb-4">Multi-Organisation</h3>
+                   <p class="text-slate-500">Verwalte verschiedene Abteilungen oder Firmen unter einem Dach. Flexible Rollen für Admins und Mitarbeiter.</p>
+                </div>
+            </div>
+
+            <!-- Bento Box 4: Wide -->
+            <div class="md:col-span-2 glass-card rounded-[32px] p-10 flex flex-col justify-between hover:border-indigo-200 transition-colors group reveal">
+                <div class="flex flex-col md:flex-row gap-10 items-center">
+                    <div class="flex-1">
+                        <div class="w-14 h-14 bg-indigo-600 rounded-2xl flex items-center justify-center mb-8 shadow-lg shadow-indigo-100 group-hover:scale-110 transition-transform">
+                            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                        </div>
+                        <h3 class="text-3xl font-bold mb-4">Automatisierter E-Mail Versand</h3>
+                        <p class="text-slate-500 text-lg">Direkte Benachrichtigungen bei neuen Anträgen. Bestätigungen an Mitarbeiter gehen automatisch raus via Resend & OAuth2 Integration.</p>
+                    </div>
+                    <div class="flex-1 bg-white border border-slate-100 rounded-2xl p-6 shadow-sm transform group-hover:rotate-1 transition-transform">
+                        <div class="flex gap-3 items-center mb-4">
+                            <div class="w-8 h-8 rounded-full bg-indigo-500"></div>
+                            <div class="w-32 h-3 bg-slate-100 rounded"></div>
+                        </div>
+                        <div class="space-y-3">
+                            <div class="w-full h-8 bg-slate-50 rounded-lg border border-slate-100"></div>
+                            <div class="w-full h-8 bg-slate-50 rounded-lg border border-slate-100"></div>
+                            <div class="w-3/4 h-8 bg-indigo-50 rounded-lg border border-indigo-100"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section (Simplified) -->
+  <section class="py-32 bg-slate-50">
+    <div class="max-w-4xl mx-auto px-6">
+        <h2 class="text-4xl font-bold font-display text-center mb-16 reveal">Häufig gestellte Fragen</h2>
+        <div class="space-y-6">
+            <div class="glass-card p-8 rounded-2xl reveal">
+                <h3 class="text-xl font-bold mb-3">Ist AWAY wirklich kostenlos?</h3>
+                <p class="text-slate-500">Für kleine Teams bieten wir eine kostenlose Basis-Version an. Für Enterprise-Features und mehr als 10 Mitarbeiter gibt es unsere Premium-Tarife.</p>
+            </div>
+            <div class="glass-card p-8 rounded-2xl reveal">
+                <h3 class="text-xl font-bold mb-3">Wie sicher sind meine Daten?</h3>
+                <p class="text-slate-500">Wir nutzen Supabase für höchste Sicherheitsstandards. Alle Daten werden in der EU gespeichert und unterliegen der DSGVO.</p>
+            </div>
+             <div class="glass-card p-8 rounded-2xl reveal">
+                <h3 class="text-xl font-bold mb-3">Wie funktioniert der Kalender-Sync?</h3>
+                <p class="text-slate-500">Einmal über den Dashboard-Link mit Outlook oder Google verbunden, synchronisieren wir deine Urlaube automatisch im Hintergrund.</p>
+            </div>
+        </div>
+    </div>
+  </section>
+
+  <!-- CTA Banner -->
+  <section class="py-32">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="bg-indigo-600 rounded-[50px] p-20 text-center text-white relative overflow-hidden shadow-2xl shadow-indigo-300 reveal">
+            <div class="absolute inset-0 bg-gradient-to-r from-indigo-700 to-purple-700 opacity-50"></div>
+            <div class="relative z-10">
+                <h2 class="text-5xl md:text-7xl font-black mb-8 font-display">Bereit für entspanntes <br/>Planen?</h2>
+                <p class="text-indigo-100 text-xl mb-12 max-w-2xl mx-auto">Sichere dir jetzt deinen Zugang und revolutioniere das Urlaubsmanagement in deinem Team.</p>
+                <div class="flex flex-wrap justify-center gap-6">
+                    <button class="bg-white text-indigo-600 px-12 py-5 rounded-3xl font-bold text-xl hover:bg-slate-50 transition-all shadow-xl active:scale-95">Jetzt kostenlos starten</button>
+                    <button class="bg-indigo-500/50 backdrop-blur-md border border-indigo-400 text-white px-12 py-5 rounded-3xl font-bold text-xl hover:bg-indigo-500 transition-all active:scale-95">Kontakt aufnehmen</button>
+                </div>
+            </div>
+        </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="py-20 border-t border-slate-200">
+    <div class="max-w-7xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-12">
+        <div class="col-span-2 md:col-span-1">
+            <div class="flex items-center gap-2 mb-8">
+                <div class="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center">
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+                </div>
+                <span class="text-xl font-bold tracking-tight text-slate-900 font-display">AWAY</span>
+            </div>
+            <p class="text-slate-400 text-sm leading-relaxed">Der intelligente Urlaubsplaner für moderne Teams. Macht Urlaub zur schönsten Zeit des Jahres – auch in der Verwaltung.</p>
+        </div>
+        <div>
+            <h4 class="font-bold mb-6 uppercase text-xs tracking-widest text-slate-900">Produkt</h4>
+            <ul class="space-y-4 text-slate-500 text-sm">
+                <li><a href="#" class="hover:text-indigo-600 transition-colors">Features</a></li>
+                <li><a href="#" class="hover:text-indigo-600 transition-colors">Integrationen</a></li>
+                <li><a href="#" class="hover:text-indigo-600 transition-colors">Roadmap</a></li>
+                <li><a href="#" class="hover:text-indigo-600 transition-colors">Preise</a></li>
+            </ul>
+        </div>
+        <div>
+            <h4 class="font-bold mb-6 uppercase text-xs tracking-widest text-slate-900">Unternehmen</h4>
+            <ul class="space-y-4 text-slate-500 text-sm">
+                <li><a href="#" class="hover:text-indigo-600 transition-colors">Über uns</a></li>
+                <li><a href="#" class="hover:text-indigo-600 transition-colors">Karriere</a></li>
+                <li><a href="#" class="hover:text-indigo-600 transition-colors">Blog</a></li>
+            </ul>
+        </div>
+        <div>
+            <h4 class="font-bold mb-6 uppercase text-xs tracking-widest text-slate-900">Rechtliches</h4>
+            <ul class="space-y-4 text-slate-500 text-sm">
+                <li><a href="impressum.html" class="hover:text-indigo-600 transition-colors">Impressum</a></li>
+                <li><a href="datenschutz.html" class="hover:text-indigo-600 transition-colors">Datenschutz</a></li>
+                <li><a href="agb.html" class="hover:text-indigo-600 transition-colors">AGB</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="max-w-7xl mx-auto px-6 mt-20 pt-12 border-t border-slate-100 flex flex-col items-center gap-8">
+        <!-- Developed in Germany Badge -->
+        <div class="flex flex-col items-center gap-3 group">
+            <svg width="44" height="44" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" class="drop-shadow-sm opacity-80 group-hover:opacity-100 transition-opacity">
+                <circle cx="100" cy="100" r="96" stroke="#0f172a" stroke-width="4" />
+                <circle cx="100" cy="100" r="86" stroke="#0f172a" stroke-width="2" opacity="0.2" />
+                <polygon points="100,28 106,46 124,46 110,56 115,74 100,64 85,74 90,56 76,46 94,46" fill="#6366f1" />
+                <path id="footerSealTextTop" d="M 30,100 A 70,70 0 0,1 170,100" fill="none" />
+                <text font-family="Outfit, sans-serif" font-size="18" font-weight="800" letter-spacing="4" fill="#0f172a">
+                    <textPath href="#footerSealTextTop" startOffset="50%" text-anchor="middle">ENTWICKELT IN</textPath>
+                </text>
+                <path id="footerSealTextBot" d="M 28,108 A 72,72 0 0,0 172,108" fill="none" />
+                <text font-family="Outfit, sans-serif" font-size="18" font-weight="800" letter-spacing="4" fill="#0f172a">
+                    <textPath href="#footerSealTextBot" startOffset="50%" text-anchor="middle">DEUTSCHLAND</textPath>
+                </text>
+                <rect x="70" y="82" width="60" height="8" rx="1" fill="#000" />
+                <rect x="70" y="90" width="60" height="8" fill="#DD0000" />
+                <rect x="70" y="98" width="60" height="8" rx="1" fill="#FFCC00" />
+            </svg>
+            <span class="text-[11px] font-bold tracking-widest text-slate-400 uppercase">Entwickelt in Deutschland</span>
+        </div>
+        
+        <div class="w-full flex flex-col md:flex-row justify-between items-center gap-4">
+            <p class="text-slate-400 text-xs">© 2024 AWAY. Ein Produkt von WAMOCON.</p>
+            <div class="flex gap-6">
+                <!-- Social Icons -->
+                <div class="w-5 h-5 bg-slate-200 rounded-full"></div>
+                <div class="w-5 h-5 bg-slate-200 rounded-full"></div>
+                <div class="w-5 h-5 bg-slate-200 rounded-full"></div>
+            </div>
+        </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
