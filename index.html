@@ -1,404 +1,1209 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="de" class="scroll-smooth">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AWAY – Moderner Urlaubsplaner | Team-Synchronisation & Automatisierung</title>
-  <meta name="description"
-    content="AWAY – Der intelligente Urlaubsplaner für moderne Teams. Kalender-Synchronisation mit Outlook & Google, Multi-Organisation, automatisierte Workflows und GDPR-konform. Powered by Supabase.">
-  <meta name="theme-color" content="#f5f5f7">
-  <meta property="og:title" content="AWAY – Urlaubsplanung neu gedacht">
-  <meta property="og:description" content="Vergiss Excel-Chaos. AWAY automatisiert deine Urlaubsanträge, synchronisiert Kalender und optimiert die Team-Kapazität.">
+  <title>AWAY – Urlaubsplanung. Endlich automatisch.</title>
+  <meta name="description" content="AWAY digitalisiert den gesamten Urlaubsprozess: Antragstellung per Wizard, automatischer E-Mail-Versand via Google & Outlook OAuth2, AcroForm-PDF Vorlagen und direkter Kalender-Sync. DSGVO-konform, entwickelt in Deutschland.">
+  <meta name="theme-color" content="#070b14">
+  <meta property="og:title" content="AWAY – Urlaubsplanung. Endlich automatisch.">
+  <meta property="og:description" content="Antragstellung, E-Mail-Versand, eigene Vorlagen und Kalender-Sync – alles in einer App.">
   <meta property="og:type" content="website">
   <meta property="og:locale" content="de_DE">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
-  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="icon" type="image/png" href="favicon.png">
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
   <style type="text/tailwindcss">
     @theme {
-      --color-bg: #f8fafc;
-      --color-bg-alt: #f1f5f9;
-      --color-surface: #ffffff;
-      --color-surface-hover: #f1f5f9;
-      --color-border: rgba(0,0,0,.06);
-      --color-border-hover: rgba(99,102,241,.2);
-      --color-accent: #6366f1;
-      --color-accent-dim: #4f46e5;
-      --color-accent-soft: rgba(99,102,241,.08);
-      --color-text-main: #0f172a;
-      --color-muted: #475569;
-      --color-faint: #94a3b8;
-      --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+      --color-bg:          #f8fafc;
+      --color-bg-alt:      #f1f5f9;
+      --color-surface:     #ffffff;
+      --color-accent:      #6366f1;
+      --color-accent-dim:  #4f46e5;
+      --color-text-main:   #0f172a;
+      --color-muted:       #475569;
+      --color-faint:       #94a3b8;
+      --color-dark-bg:     #070b14;
+      --font-sans:    'Inter', system-ui, -apple-system, sans-serif;
       --font-display: 'Outfit', sans-serif;
     }
     body { font-family: var(--font-sans); background: var(--color-bg); color: var(--color-text-main); }
-    h1, h2, h3, .font-display { font-family: var(--font-display); }
-    
-    .gradient-text { background: linear-gradient(135deg, #6366f1, #a855f7); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
-    .glass-card { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(12px) saturate(180%); border: 1px solid rgba(255, 255, 255, 0.3); box-shadow: 0 8px 32px rgba(31, 38, 135, 0.07); }
-    
-    /* Reveal Animation Override for AWAY */
-    .reveal { opacity: 0; transform: translateY(20px); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
-    .reveal--visible { opacity: 1; transform: translateY(0); }
-
-    /* Custom Ticker / Marquee */
-    .marquee-track { animation: marquee 30s linear infinite; }
-    @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-
-    /* ROI Slider Customization */
-    input[type=range] { appearance: none; width: 100%; background: transparent; }
-    input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 8px; cursor: pointer; background: #e2e8f0; border-radius: 4px; }
-    input[type=range]::-webkit-slider-thumb { height: 24px; width: 24px; border-radius: 50%; background: #6366f1; cursor: pointer; appearance: none; margin-top: -8px; box-shadow: 0 4px 12px rgba(99,102,241,0.3); border: 2px solid white; transition: transform 0.2s; }
-    input[type=range]:active::-webkit-slider-thumb { transform: scale(1.2); }
+    h1, h2, h3, h4, .font-display { font-family: var(--font-display); }
+    .gradient-text {
+      background: linear-gradient(135deg, #6366f1, #a855f7);
+      -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+    }
   </style>
 </head>
-
 <body class="overflow-x-hidden antialiased">
 
-  <!-- Header / Nav -->
+  <!-- ═══ NAVBAR ═══════════════════════════════════════════════ -->
   <header id="nav" class="fixed top-0 left-0 right-0 z-[100] transition-all duration-300 py-4">
-    <div class="max-w-7xl mx-auto px-6 flex items-center justify-between">
-      <div class="flex items-center gap-2">
-        <div class="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-200">
-           <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+    <div class="max-w-7xl mx-auto px-5 flex items-center justify-between gap-4">
+
+      <!-- Logo -->
+      <a href="#" class="flex items-center gap-2.5 shrink-0">
+        <div class="w-9 h-9 bg-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-900/40">
+          <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/>
+          </svg>
         </div>
-        <span class="text-2xl font-bold tracking-tight text-slate-900 font-display">AWAY</span>
-      </div>
-      
-      <nav class="hidden md:flex items-center gap-1 bg-white/50 backdrop-blur-md border border-slate-200/50 rounded-full px-2 py-1.5 shadow-sm">
-        <a href="#features" class="px-4 py-2 text-sm font-medium text-slate-600 hover:text-indigo-600 transition-colors uppercase tracking-wider">Features</a>
-        <a href="#roi" class="px-4 py-2 text-sm font-medium text-slate-600 hover:text-indigo-600 transition-colors uppercase tracking-wider">ROI Rechner</a>
-        <a href="#innovation" class="px-4 py-2 text-sm font-medium text-slate-600 hover:text-indigo-600 transition-colors uppercase tracking-wider">Innovation</a>
-        <a href="#pricing" class="px-4 py-2 text-sm font-medium text-slate-600 hover:text-indigo-600 transition-colors uppercase tracking-wider">Preise</a>
+        <span class="text-xl font-black tracking-tight text-white font-display">AWAY</span>
+      </a>
+
+      <!-- Desktop Nav -->
+      <nav class="hidden md:flex items-center gap-1 bg-white/6 backdrop-blur border border-white/10 rounded-full px-2 py-1.5">
+        <a href="#features" class="px-4 py-2 text-sm font-medium text-white/60 hover:text-white transition-colors rounded-full hover:bg-white/5" data-de="Features" data-en="Features">Features</a>
+        <a href="#how" class="px-4 py-2 text-sm font-medium text-white/60 hover:text-white transition-colors rounded-full hover:bg-white/5" data-de="Wie es funktioniert" data-en="How it works">Wie es funktioniert</a>
+        <a href="#showcase" class="px-4 py-2 text-sm font-medium text-white/60 hover:text-white transition-colors rounded-full hover:bg-white/5" data-de="App ansehen" data-en="See the App">App ansehen</a>
+        <a href="#roi" class="px-4 py-2 text-sm font-medium text-white/60 hover:text-white transition-colors rounded-full hover:bg-white/5" data-de="ROI Rechner" data-en="ROI Calculator">ROI Rechner</a>
+        <a href="#pricing" class="px-4 py-2 text-sm font-medium text-white/60 hover:text-white transition-colors rounded-full hover:bg-white/5" data-de="Preise" data-en="Pricing">Preise</a>
       </nav>
 
-      <div>
-        <a href="#login" class="bg-indigo-600 text-white px-6 py-2.5 rounded-full font-semibold text-sm hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-200 active:scale-95">Jetzt Starten</a>
+      <!-- Right side: Lang + CTA + mobile menu -->
+      <div class="flex items-center gap-3">
+        <!-- Language Toggle -->
+        <div class="lang-toggle hidden md:flex">
+          <button id="lang-de" class="lang-btn active-lang" aria-label="Deutsch">DE</button>
+          <button id="lang-en" class="lang-btn" aria-label="English">EN</button>
+        </div>
+
+        <a href="https://away-alpha.vercel.app/" target="_blank" rel="noopener" class="hidden md:inline-flex items-center bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-2.5 rounded-full font-semibold text-sm transition-all shadow-lg shadow-indigo-900/40 active:scale-95" data-de="Kostenlos starten" data-en="Start free">Kostenlos starten</a>
+
+        <!-- Mobile hamburger -->
+        <button id="mobile-menu-btn" class="md:hidden flex flex-col gap-1.5 p-2" aria-expanded="false" aria-label="Menü">
+          <span class="w-5 h-0.5 bg-white/70 rounded"></span>
+          <span class="w-5 h-0.5 bg-white/70 rounded"></span>
+          <span class="w-5 h-0.5 bg-white/70 rounded"></span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Nav Dropdown -->
+    <div id="mobile-nav" class="hidden md:hidden mt-2 mx-4 bg-slate-900/95 backdrop-blur border border-white/10 rounded-2xl p-4">
+      <div class="flex flex-col gap-1">
+        <a href="#features" class="px-4 py-3 text-sm font-medium text-white/70 hover:text-white hover:bg-white/5 rounded-xl transition-colors" data-de="Features" data-en="Features">Features</a>
+        <a href="#how" class="px-4 py-3 text-sm font-medium text-white/70 hover:text-white hover:bg-white/5 rounded-xl transition-colors" data-de="Wie es funktioniert" data-en="How it works">Wie es funktioniert</a>
+        <a href="#showcase" class="px-4 py-3 text-sm font-medium text-white/70 hover:text-white hover:bg-white/5 rounded-xl transition-colors" data-de="App ansehen" data-en="See the App">App ansehen</a>
+        <a href="#roi" class="px-4 py-3 text-sm font-medium text-white/70 hover:text-white hover:bg-white/5 rounded-xl transition-colors" data-de="ROI Rechner" data-en="ROI Calculator">ROI Rechner</a>
+        <a href="#pricing" class="px-4 py-3 text-sm font-medium text-white/70 hover:text-white hover:bg-white/5 rounded-xl transition-colors" data-de="Preise" data-en="Pricing">Preise</a>
+        <hr class="border-white/10 my-2">
+        <div class="lang-toggle mx-4 mb-2 w-fit">
+          <button id="lang-de-m" class="lang-btn active-lang" aria-label="Deutsch">DE</button>
+          <button id="lang-en-m" class="lang-btn" aria-label="English">EN</button>
+        </div>
+        <a href="https://away-alpha.vercel.app/" target="_blank" rel="noopener" class="bg-indigo-600 text-white px-4 py-3 rounded-xl font-semibold text-sm text-center transition-all" data-de="Kostenlos starten" data-en="Start free">Kostenlos starten</a>
       </div>
     </div>
   </header>
 
-  <!-- Hero Section -->
-  <section id="hero" class="relative pt-40 pb-32 overflow-hidden">
-    <!-- Animated Orbs -->
-    <div class="absolute top-0 left-1/4 w-96 h-96 bg-indigo-400/20 blur-[120px] rounded-full animate-pulse"></div>
-    <div class="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-purple-400/10 blur-[120px] rounded-full"></div>
+  <!-- ═══ HERO ══════════════════════════════════════════════════ -->
+  <section id="hero" class="relative min-h-screen flex items-center overflow-hidden" style="background:#070b14;">
+    <!-- Glow Orbs -->
+    <div class="orb w-[600px] h-[600px] bg-indigo-600/25 -top-32 -left-32"></div>
+    <div class="orb w-[500px] h-[500px] bg-violet-600/15 bottom-0 right-0" style="animation-delay:3s;"></div>
 
-    <div class="max-w-7xl mx-auto px-6 text-center relative z-10">
-      <div class="inline-flex items-center gap-2 bg-indigo-50 border border-indigo-100 px-4 py-2 rounded-full mb-8 reveal">
-        <span class="flex h-2 w-2 rounded-full bg-indigo-500 animate-ping"></span>
-        <span class="text-indigo-700 text-xs font-bold uppercase tracking-widest">Neu: Kalender Sync 2.0</span>
+    <div class="max-w-7xl mx-auto px-5 pt-28 pb-20 w-full">
+      <div class="flex flex-col lg:flex-row items-center gap-16 lg:gap-20">
+
+        <!-- Left: Text -->
+        <div class="flex-1 text-center lg:text-left">
+          <!-- Badge -->
+          <div class="inline-flex items-center gap-2 bg-indigo-500/10 border border-indigo-500/20 px-4 py-2 rounded-full mb-8 reveal">
+            <span class="flex h-2 w-2 rounded-full bg-indigo-400 animate-ping"></span>
+            <span class="text-indigo-300 text-xs font-bold uppercase tracking-widest" data-de="Neu: Outlook &amp; Google OAuth2-Sync" data-en="New: Outlook &amp; Google OAuth2 Sync">Neu: Outlook &amp; Google OAuth2-Sync</span>
+          </div>
+
+          <h1 class="text-5xl md:text-6xl xl:text-7xl font-black text-white mb-6 tracking-tight font-display leading-[1.05] reveal">
+            <span data-de="Urlaubsplanung." data-en="Leave management.">Urlaubsplanung.</span><br>
+            <span class="gradient-text" data-de="Endlich automatisch." data-en="Finally automated.">Endlich automatisch.</span>
+          </h1>
+
+          <p class="text-lg text-white/50 mb-10 leading-relaxed max-w-xl mx-auto lg:mx-0 reveal" data-de="AWAY digitalisiert den gesamten Prozess: vom Antrag per Wizard über den automatischen E-Mail-Versand bis zur direkten Kalender-Synchronisation mit Outlook und Google. Kein Excel, kein E-Mail-Ping-Pong." data-en="AWAY digitalizes the complete process: from the request wizard to automated email dispatch and direct calendar sync with Outlook and Google. No Excel, no email ping-pong.">
+            AWAY digitalisiert den gesamten Prozess: vom Antrag per Wizard über den automatischen E-Mail-Versand bis zur direkten Kalender-Synchronisation mit Outlook und Google. Kein Excel, kein E-Mail-Ping-Pong.
+          </p>
+
+          <div class="flex flex-wrap items-center gap-4 justify-center lg:justify-start reveal">
+            <a href="https://away-alpha.vercel.app/" target="_blank" rel="noopener" class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white px-7 py-4 rounded-2xl font-bold text-base transition-all shadow-xl shadow-indigo-900/40 active:scale-95">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+              <span data-de="Kostenlos starten" data-en="Start free">Kostenlos starten</span>
+            </a>
+            <a href="#showcase" class="inline-flex items-center gap-2 border border-white/15 hover:border-white/30 text-white/75 hover:text-white px-7 py-4 rounded-2xl font-bold text-base transition-all">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+              <span data-de="App ansehen" data-en="See the app">App ansehen</span>
+            </a>
+          </div>
+
+          <!-- Trust indicators -->
+          <div class="mt-10 flex flex-wrap items-center gap-5 justify-center lg:justify-start reveal">
+            <div class="flex items-center gap-2 text-white/35 text-xs font-medium">
+              <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+              <span data-de="DSGVO-konform" data-en="GDPR compliant">DSGVO-konform</span>
+            </div>
+            <div class="flex items-center gap-2 text-white/35 text-xs font-medium">
+              <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6H8l-1-1H5a2 2 0 00-2 2zm9-13.5V9"/></svg>
+              <span data-de="Entwickelt in Deutschland" data-en="Made in Germany">Entwickelt in Deutschland</span>
+            </div>
+            <div class="flex items-center gap-2 text-white/35 text-xs font-medium">
+              <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              <span data-de="Einrichtung in &lt; 5 Min." data-en="Setup in &lt; 5 min.">Einrichtung in &lt; 5 Min.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: iPhone 15 Pro Titanium -->
+        <div class="flex-shrink-0 reveal flex flex-col items-center gap-6">
+          <div class="iphone-frame">
+            <div class="iphone-inner">
+              <div class="iphone-island"></div>
+              <div class="iphone-screen">
+
+                <!-- Screen 1: Dashboard -->
+                <div class="app-screen active screen-dashboard">
+                  <div class="flex items-center justify-between mb-1">
+                    <span class="screen-logo">AWAY</span>
+                    <div class="screen-avatar"></div>
+                  </div>
+                  <div class="kpi-grid">
+                    <div class="kpi-card">
+                      <div class="kpi-label">Ausstehend</div>
+                      <div class="kpi-value kpi-amber">3</div>
+                    </div>
+                    <div class="kpi-card">
+                      <div class="kpi-label">Genehmigt</div>
+                      <div class="kpi-value kpi-green">18</div>
+                    </div>
+                    <div class="kpi-card">
+                      <div class="kpi-label">Heute zurück</div>
+                      <div class="kpi-value kpi-blue">2</div>
+                    </div>
+                    <div class="kpi-card">
+                      <div class="kpi-label">Resturlaub</div>
+                      <div class="kpi-value" style="color:#fff;">12</div>
+                    </div>
+                  </div>
+                  <div style="font-size:7px;color:rgba(255,255,255,0.35);font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin:4px 0 3px;">Letzte Anträge</div>
+                  <div class="request-list-item">
+                    <div class="req-avatar"></div>
+                    <div class="req-info"><div class="req-name"></div><div class="req-date"></div></div>
+                    <span class="req-badge badge-green">Genehmigt</span>
+                  </div>
+                  <div class="request-list-item">
+                    <div class="req-avatar" style="background:rgba(245,158,11,0.3);"></div>
+                    <div class="req-info"><div class="req-name"></div><div class="req-date"></div></div>
+                    <span class="req-badge badge-amber">Ausstehend</span>
+                  </div>
+                  <div class="request-list-item">
+                    <div class="req-avatar" style="background:rgba(99,102,241,0.35);"></div>
+                    <div class="req-info"><div class="req-name"></div><div class="req-date"></div></div>
+                    <span class="req-badge badge-blue">Entwurf</span>
+                  </div>
+                </div>
+
+                <!-- Screen 2: Wizard Schritt 2/4 -->
+                <div class="app-screen screen-wizard">
+                  <div class="wizard-steps">
+                    <div class="wstep done"></div>
+                    <div class="wstep active"></div>
+                    <div class="wstep"></div>
+                    <div class="wstep"></div>
+                  </div>
+                  <div class="wizard-title">Antragsdaten</div>
+                  <div class="wizard-sub">Schritt 2 von 4 – Zeitraum &amp; Details</div>
+                  <div class="form-field">
+                    <div class="field-label">Personalnummer</div>
+                    <div class="field-value short" style="background:rgba(99,102,241,0.3);"></div>
+                  </div>
+                  <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+                    <div class="form-field">
+                      <div class="field-label">Von</div>
+                      <div class="field-value"></div>
+                    </div>
+                    <div class="form-field">
+                      <div class="field-label">Bis</div>
+                      <div class="field-value"></div>
+                    </div>
+                  </div>
+                  <div class="form-field">
+                    <div class="field-label">Urlaubsart</div>
+                    <div class="field-value" style="width:80%;"></div>
+                  </div>
+                  <div class="form-field">
+                    <div class="field-label">Vertretung</div>
+                    <div class="field-value"></div>
+                  </div>
+                  <div class="wizard-btn"><span class="wizard-btn-text">Weiter →</span></div>
+                </div>
+
+                <!-- Screen 3: Kalender -->
+                <div class="app-screen screen-calendar">
+                  <div class="cal-header">
+                    <span class="cal-title">Kalender</span>
+                    <span class="cal-month">April 2026</span>
+                  </div>
+                  <div class="cal-grid">
+                    <div class="cal-day-label">Mo</div><div class="cal-day-label">Di</div><div class="cal-day-label">Mi</div>
+                    <div class="cal-day-label">Do</div><div class="cal-day-label">Fr</div><div class="cal-day-label">Sa</div><div class="cal-day-label">So</div>
+                    <div class="cal-day empty">30</div><div class="cal-day">1</div><div class="cal-day">2</div>
+                    <div class="cal-day">3</div><div class="cal-day">4</div><div class="cal-day ev-amber">5</div><div class="cal-day ev-amber">6</div>
+                    <div class="cal-day ev-blue">7</div><div class="cal-day ev-blue">8</div><div class="cal-day ev-blue">9</div>
+                    <div class="cal-day ev-blue">10</div><div class="cal-day ev-blue">11</div><div class="cal-day">12</div><div class="cal-day">13</div>
+                    <div class="cal-day">14</div><div class="cal-day today-d">15</div><div class="cal-day ev-green">16</div>
+                    <div class="cal-day ev-green">17</div><div class="cal-day ev-green">18</div><div class="cal-day">19</div><div class="cal-day">20</div>
+                    <div class="cal-day">21</div><div class="cal-day">22</div><div class="cal-day">23</div>
+                    <div class="cal-day">24</div><div class="cal-day">25</div><div class="cal-day">26</div><div class="cal-day">27</div>
+                    <div class="cal-day">28</div><div class="cal-day">29</div><div class="cal-day">30</div>
+                    <div class="cal-day empty">1</div><div class="cal-day empty">2</div><div class="cal-day empty">3</div><div class="cal-day empty">4</div>
+                  </div>
+                  <div class="cal-legend">
+                    <div class="legend-item"><div class="leg-dot" style="background:#818cf8;"></div>Genehmigt</div>
+                    <div class="legend-item"><div class="leg-dot" style="background:#f59e0b;"></div>Ausstehend</div>
+                    <div class="legend-item"><div class="leg-dot" style="background:#10b981;"></div>Urlaub</div>
+                  </div>
+                </div>
+
+              </div><!-- /iphone-screen -->
+            </div><!-- /iphone-inner -->
+          </div><!-- /iphone-frame -->
+
+          <!-- Floating notification -->
+          <div class="toast-animate flex items-center gap-3 bg-slate-800/90 backdrop-blur border border-white/10 px-4 py-3 rounded-2xl shadow-2xl text-sm text-white" style="max-width:230px;">
+            <div class="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center shrink-0">
+              <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+            </div>
+            <div>
+              <div class="font-semibold text-xs" data-de="Antrag genehmigt" data-en="Request approved">Antrag genehmigt</div>
+              <div class="text-white/40 text-[10px]" data-de="Kalender wird synchronisiert …" data-en="Calendar is syncing …">Kalender wird synchronisiert …</div>
+            </div>
+          </div>
+        </div>
+
       </div>
-      
-      <h1 class="text-6xl md:text-8xl font-black text-slate-900 mb-8 tracking-tight font-display reveal">
-        Urlaub planen. <br/>
-        <span class="gradient-text">Einfach weg sein.</span>
-      </h1>
-      
-      <p class="max-w-2xl mx-auto text-lg text-slate-500 mb-12 leading-relaxed reveal">
-        AWAY automatisiert die Urlaubsplanung für moderne Teams. Synchronisiere Outlook & Google, verwalte Organisationen und sag Excel den Kampf ans.
-      </p>
+    </div>
+  </section>
 
-      <div class="flex flex-wrap items-center justify-center gap-4 reveal">
-        <button class="bg-slate-900 text-white px-10 py-5 rounded-2xl font-bold text-lg hover:bg-slate-800 transition-all shadow-xl active:scale-95">Demo anfordern</button>
-        <button class="bg-white text-slate-900 border border-slate-200 px-10 py-5 rounded-2xl font-bold text-lg hover:bg-slate-50 transition-all shadow-sm active:scale-95">Features entdecken</button>
-      </div>
-
-      <!-- App Preview Mockup -->
-      <div class="mt-24 relative max-w-5xl mx-auto reveal group">
-        <div class="absolute inset-0 bg-gradient-to-t from-indigo-500 to-purple-600 blur-3xl opacity-20 group-hover:opacity-30 transition-opacity"></div>
-        <div class="border-4 border-slate-900 rounded-[32px] overflow-hidden shadow-2xl bg-white aspect-video relative">
-            <!-- Mock UI Elements -->
-            <div class="absolute inset-0 bg-slate-50 flex flex-col p-8">
-                <div class="flex items-center justify-between mb-8">
-                    <div class="flex gap-4">
-                        <div class="w-12 h-12 bg-indigo-100 rounded-lg"></div>
-                        <div class="space-y-2">
-                            <div class="w-32 h-4 bg-slate-200 rounded"></div>
-                            <div class="w-20 h-3 bg-slate-100 rounded"></div>
-                        </div>
-                    </div>
-                    <div class="flex gap-2">
-                        <div class="w-24 h-8 bg-indigo-600 rounded-md"></div>
-                        <div class="w-8 h-8 bg-slate-200 rounded-full"></div>
-                    </div>
-                </div>
-                <!-- Grid of Vacation Cards -->
-                <div class="grid grid-cols-3 gap-6">
-                    <div class="h-40 bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
-                        <div class="w-full h-4 bg-indigo-50 rounded mb-4"></div>
-                        <div class="flex items-center gap-2 mb-4">
-                            <div class="w-6 h-6 rounded-full bg-slate-100"></div>
-                            <div class="w-16 h-3 bg-slate-100 rounded"></div>
-                        </div>
-                        <div class="w-24 h-6 bg-green-100 rounded-full"></div>
-                    </div>
-                    <div class="h-40 bg-white border border-slate-200 rounded-2xl p-4 shadow-sm border-indigo-200 ring-2 ring-indigo-50">
-                        <div class="w-full h-4 bg-indigo-50 rounded mb-4"></div>
-                        <div class="flex items-center gap-2 mb-4">
-                            <div class="w-6 h-6 rounded-full bg-slate-100"></div>
-                            <div class="w-16 h-3 bg-slate-100 rounded"></div>
-                        </div>
-                        <div class="w-24 h-6 bg-yellow-100 rounded-full"></div>
-                    </div>
-                     <div class="h-40 bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
-                        <div class="w-full h-4 bg-indigo-50 rounded mb-4"></div>
-                        <div class="flex items-center gap-2 mb-4">
-                            <div class="w-6 h-6 rounded-full bg-slate-100"></div>
-                            <div class="w-16 h-3 bg-slate-100 rounded"></div>
-                        </div>
-                        <div class="w-24 h-6 bg-blue-100 rounded-full"></div>
-                    </div>
-                </div>
-            </div>
-            <!-- Interactive Floating Overlay -->
-            <div class="absolute bottom-10 right-10 bg-white p-4 rounded-2xl shadow-2xl border border-indigo-100 animate-bounce">
-                <div class="flex items-center gap-3">
-                    <div class="w-3 h-3 bg-green-500 rounded-full"></div>
-                    <span class="text-sm font-bold text-slate-700">Antrag genehmigt!</span>
-                </div>
-            </div>
+  <!-- ═══ TRUST BAR ═════════════════════════════════════════════ -->
+  <section style="background:#0c1120;border-top:1px solid rgba(255,255,255,0.05);border-bottom:1px solid rgba(255,255,255,0.05);" class="py-8 overflow-hidden">
+    <div class="max-w-7xl mx-auto px-5 mb-5">
+      <p class="text-center text-white/25 text-xs font-semibold uppercase tracking-widest" data-de="Integriert mit führenden Plattformen" data-en="Integrated with leading platforms">Integriert mit führenden Plattformen</p>
+    </div>
+    <div class="relative overflow-hidden">
+      <div class="marquee-track" style="width:max-content;">
+        <!-- Set 1 -->
+        <div class="trust-logo">
+          <svg width="18" height="18" viewBox="0 0 23 23" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 1h9.5v9.5H1z" fill="#f25022"/><path d="M12.5 1H22v9.5h-9.5z" fill="#7fba00"/><path d="M1 12.5h9.5V22H1z" fill="#00a4ef"/><path d="M12.5 12.5H22V22h-9.5z" fill="#ffb900"/></svg>
+          <span style="font-size:.875rem;font-weight:600;color:rgba(255,255,255,0.65);">Microsoft 365</span>
+        </div>
+        <div class="trust-logo">
+          <svg width="18" height="18" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"><path fill="#4285F4" d="M43.6 20.5H42V20H24v8h11.3C33.9 32.3 29.4 35 24 35c-6.1 0-11-4.9-11-11s4.9-11 11-11c2.8 0 5.3 1 7.2 2.7l5.7-5.7C33.9 7.2 29.2 5 24 5 13 5 4 14 4 25s9 20 20 20c11 0 20-9 20-20 0-1.2-.1-2.5-.4-4.5z"/><path fill="#34A853" d="M6.3 15.7l6.6 4.8C14.5 17 19 14 24 14c2.8 0 5.3 1 7.2 2.7l5.7-5.7C33.9 7.2 29.2 5 24 5c-7.7 0-14.3 4.5-17.7 10.7z"/><path fill="#FBBC05" d="M24 45c5.2 0 9.9-2 13.4-5.2l-6.2-5.2A12 12 0 0124 36c-5.4 0-9.9-2.7-11.3-6.5l-6.6 4.8C9.7 40.5 16.3 45 24 45z"/><path fill="#EA4335" d="M43.6 20.5H42V20H24v8h11.3C34.9 30.8 33 32.7 30.8 34l6.2 5.2C41 35.5 44 30.7 44 25c0-1.5-.2-2.9-.4-4.5z"/></svg>
+          <span style="font-size:.875rem;font-weight:600;color:rgba(255,255,255,0.65);">Google Workspace</span>
+        </div>
+        <div class="trust-logo">
+          <svg width="18" height="18" viewBox="0 0 109 113" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M63.7 0H44.3l-8 22.6 27.4 0L63.7 0z" fill="#3ECF8E"/><path d="M0 71.2l9.4 26.6 23.3-13.3L0 71.2z" fill="#3ECF8E" opacity=".7"/><path d="M109 71.2l-32.7 13.3 23.3 13.3L109 71.2z" fill="#3ECF8E" opacity=".5"/><ellipse cx="54.1" cy="63.1" rx="28.3" ry="28.3" fill="#3ECF8E"/></svg>
+          <span style="font-size:.875rem;font-weight:600;color:rgba(255,255,255,0.65);">Supabase</span>
+        </div>
+        <div class="trust-logo">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z" fill="#10b981"/></svg>
+          <span style="font-size:.875rem;font-weight:600;color:rgba(255,255,255,0.65);" data-de="DSGVO-konform" data-en="GDPR compliant">DSGVO-konform</span>
+        </div>
+        <div class="trust-logo">
+          <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="rgba(255,255,255,0.5)" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+          <span style="font-size:.875rem;font-weight:600;color:rgba(255,255,255,0.65);" data-de="Entwickelt in Deutschland" data-en="Made in Germany">Entwickelt in Deutschland</span>
+        </div>
+        <div class="trust-logo">
+          <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="rgba(255,255,255,0.5)" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+          <span style="font-size:.875rem;font-weight:600;color:rgba(255,255,255,0.65);">OAuth2 E-Mail</span>
+        </div>
+        <!-- Set 2 (duplicate for seamless loop) -->
+        <div class="trust-logo">
+          <svg width="18" height="18" viewBox="0 0 23 23" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 1h9.5v9.5H1z" fill="#f25022"/><path d="M12.5 1H22v9.5h-9.5z" fill="#7fba00"/><path d="M1 12.5h9.5V22H1z" fill="#00a4ef"/><path d="M12.5 12.5H22V22h-9.5z" fill="#ffb900"/></svg>
+          <span style="font-size:.875rem;font-weight:600;color:rgba(255,255,255,0.65);">Microsoft 365</span>
+        </div>
+        <div class="trust-logo">
+          <svg width="18" height="18" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"><path fill="#4285F4" d="M43.6 20.5H42V20H24v8h11.3C33.9 32.3 29.4 35 24 35c-6.1 0-11-4.9-11-11s4.9-11 11-11c2.8 0 5.3 1 7.2 2.7l5.7-5.7C33.9 7.2 29.2 5 24 5 13 5 4 14 4 25s9 20 20 20c11 0 20-9 20-20 0-1.2-.1-2.5-.4-4.5z"/><path fill="#34A853" d="M6.3 15.7l6.6 4.8C14.5 17 19 14 24 14c2.8 0 5.3 1 7.2 2.7l5.7-5.7C33.9 7.2 29.2 5 24 5c-7.7 0-14.3 4.5-17.7 10.7z"/><path fill="#FBBC05" d="M24 45c5.2 0 9.9-2 13.4-5.2l-6.2-5.2A12 12 0 0124 36c-5.4 0-9.9-2.7-11.3-6.5l-6.6 4.8C9.7 40.5 16.3 45 24 45z"/><path fill="#EA4335" d="M43.6 20.5H42V20H24v8h11.3C34.9 30.8 33 32.7 30.8 34l6.2 5.2C41 35.5 44 30.7 44 25c0-1.5-.2-2.9-.4-4.5z"/></svg>
+          <span style="font-size:.875rem;font-weight:600;color:rgba(255,255,255,0.65);">Google Workspace</span>
+        </div>
+        <div class="trust-logo">
+          <svg width="18" height="18" viewBox="0 0 109 113" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M63.7 0H44.3l-8 22.6 27.4 0L63.7 0z" fill="#3ECF8E"/><path d="M0 71.2l9.4 26.6 23.3-13.3L0 71.2z" fill="#3ECF8E" opacity=".7"/><path d="M109 71.2l-32.7 13.3 23.3 13.3L109 71.2z" fill="#3ECF8E" opacity=".5"/><ellipse cx="54.1" cy="63.1" rx="28.3" ry="28.3" fill="#3ECF8E"/></svg>
+          <span style="font-size:.875rem;font-weight:600;color:rgba(255,255,255,0.65);">Supabase</span>
+        </div>
+        <div class="trust-logo">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z" fill="#10b981"/></svg>
+          <span style="font-size:.875rem;font-weight:600;color:rgba(255,255,255,0.65);" data-de="DSGVO-konform" data-en="GDPR compliant">DSGVO-konform</span>
+        </div>
+        <div class="trust-logo">
+          <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="rgba(255,255,255,0.5)" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+          <span style="font-size:.875rem;font-weight:600;color:rgba(255,255,255,0.65);" data-de="Entwickelt in Deutschland" data-en="Made in Germany">Entwickelt in Deutschland</span>
+        </div>
+        <div class="trust-logo">
+          <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="rgba(255,255,255,0.5)" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+          <span style="font-size:.875rem;font-weight:600;color:rgba(255,255,255,0.65);">OAuth2 E-Mail</span>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Innovation: ROI Calculator Section -->
-  <section id="roi" class="py-32 bg-slate-900 text-white overflow-hidden relative">
-    <div class="max-w-7xl mx-auto px-6">
-        <div class="grid md:grid-cols-2 gap-20 items-center">
-            <div class="reveal">
-                <h2 class="text-5xl font-bold font-display mb-6 tracking-tight">Wie viel Zeit <br/>verschwendet ihr?</h2>
-                <p class="text-slate-400 text-lg mb-10">Berechnet die Zeitersparnis durch AWAY. Automatisierte Anträge, direkte Kalender-Synchronisation und weniger E-Mail-Ping-Pong.</p>
-                
-                <div class="space-y-12">
-                    <div class="space-y-4">
-                        <div class="flex justify-between items-center">
-                            <label class="text-sm font-bold uppercase tracking-widest text-indigo-400">Anzahl Mitarbeiter</label>
-                            <span id="employee-count-label" class="text-2xl font-bold">50</span>
-                        </div>
-                        <input type="range" id="employee-slider" min="10" max="1000" value="50">
-                    </div>
+  <!-- ═══ HOW IT WORKS ═════════════════════════════════════════ -->
+  <section id="how" class="py-28" style="background:#f8fafc;">
+    <div class="max-w-7xl mx-auto px-5">
+      <div class="text-center mb-16 reveal">
+        <div class="section-chip mb-5" data-de="So funktioniert's" data-en="How it works">So funktioniert's</div>
+        <h2 class="text-4xl md:text-5xl font-black text-slate-900 font-display tracking-tight mb-4" data-de="Drei Schritte. Kein Chaos." data-en="Three steps. No chaos.">Drei Schritte. Kein Chaos.</h2>
+        <p class="text-slate-500 text-lg max-w-xl mx-auto" data-de="Von der Antragstellung bis zum synchronisierten Kalender – vollständig automatisiert." data-en="From request submission to synced calendar – fully automated.">Von der Antragstellung bis zum synchronisierten Kalender – vollständig automatisiert.</p>
+      </div>
 
-                    <div class="space-y-4">
-                        <div class="flex justify-between items-center">
-                            <label class="text-sm font-bold uppercase tracking-widest text-indigo-400">Anträge pro Jahr (Ø)</label>
-                            <span id="request-count-label" class="text-2xl font-bold">5</span>
-                        </div>
-                        <input type="range" id="request-slider" min="1" max="12" value="5">
-                    </div>
-                </div>
-            </div>
-
-            <div class="relative reveal">
-                <div class="absolute inset-0 bg-indigo-600 blur-[100px] opacity-20"></div>
-                <div class="bg-slate-800/80 backdrop-blur-xl border border-slate-700 p-12 rounded-[40px] text-center shadow-2xl">
-                    <div class="text-indigo-400 font-bold uppercase tracking-widest mb-4">Eure jährliche Ersparnis</div>
-                    <div id="savings-value" class="text-7xl font-black mb-4 font-display">12.500 €</div>
-                    <div class="text-slate-400 mb-10">entspricht ca. <span id="hours-value" class="text-white font-bold">250 Arbeitsstunden</span> pro Jahr.</div>
-                    <button class="w-full bg-indigo-600 py-4 rounded-2xl font-bold hover:bg-indigo-500 transition-all shadow-lg shadow-indigo-600/20">Jetzt Zeit sparen</button>
-                    
-                    <div class="mt-8 flex justify-center gap-6">
-                        <div class="flex flex-col items-center">
-                            <span class="text-xs text-slate-500 uppercase font-bold">ROI</span>
-                            <span class="text-green-400 font-bold">14x</span>
-                        </div>
-                         <div class="flex flex-col items-center">
-                            <span class="text-xs text-slate-500 uppercase font-bold">Break-Even</span>
-                            <span class="text-white font-bold">2 Mon.</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
+      <div class="flex flex-col md:flex-row items-start md:items-center gap-8 md:gap-0 justify-center">
+        <!-- Step 1 -->
+        <div class="flex-1 flex flex-col items-center text-center px-6 reveal">
+          <div class="w-16 h-16 rounded-2xl bg-indigo-600 flex items-center justify-center mb-5 shadow-lg shadow-indigo-200">
+            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+          </div>
+          <div class="w-8 h-8 rounded-full bg-indigo-100 text-indigo-700 font-black text-sm flex items-center justify-center mb-3">1</div>
+          <h3 class="font-bold text-slate-900 text-xl mb-2" data-de="Antrag per Wizard stellen" data-en="Submit request via wizard">Antrag per Wizard stellen</h3>
+          <p class="text-slate-500 text-sm leading-relaxed" data-de="Zeitraum, Urlaubsart und Vertretung in 4 geführten Schritten eingeben. AcroForm-PDF Vorlage wählen – fertig." data-en="Enter period, leave type and cover in 4 guided steps. Choose AcroForm PDF template – done.">Zeitraum, Urlaubsart und Vertretung in 4 geführten Schritten eingeben. AcroForm-PDF Vorlage wählen – fertig.</p>
         </div>
+
+        <div class="step-connector hidden md:block"></div>
+
+        <!-- Step 2 -->
+        <div class="flex-1 flex flex-col items-center text-center px-6 reveal">
+          <div class="w-16 h-16 rounded-2xl bg-violet-600 flex items-center justify-center mb-5 shadow-lg shadow-violet-200">
+            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+          </div>
+          <div class="w-8 h-8 rounded-full bg-violet-100 text-violet-700 font-black text-sm flex items-center justify-center mb-3">2</div>
+          <h3 class="font-bold text-slate-900 text-xl mb-2" data-de="Antrag automatisch versenden" data-en="Automatically send request">Antrag automatisch versenden</h3>
+          <p class="text-slate-500 text-sm leading-relaxed" data-de="AWAY versendet den generierten Antrag direkt per OAuth2 über dein Google- oder Microsoft-Konto – kein SMTP nötig." data-en="AWAY sends the generated request directly via OAuth2 through your Google or Microsoft account – no SMTP needed.">AWAY versendet den generierten Antrag direkt per OAuth2 über dein Google- oder Microsoft-Konto – kein SMTP nötig.</p>
+        </div>
+
+        <div class="step-connector hidden md:block"></div>
+
+        <!-- Step 3 -->
+        <div class="flex-1 flex flex-col items-center text-center px-6 reveal">
+          <div class="w-16 h-16 rounded-2xl bg-emerald-600 flex items-center justify-center mb-5 shadow-lg shadow-emerald-200">
+            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+          </div>
+          <div class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-700 font-black text-sm flex items-center justify-center mb-3">3</div>
+          <h3 class="font-bold text-slate-900 text-xl mb-2" data-de="Kalender wird synchronisiert" data-en="Calendar gets synced">Kalender wird synchronisiert</h3>
+          <p class="text-slate-500 text-sm leading-relaxed" data-de="Nach der Genehmigung trägt AWAY den Urlaub automatisch in Outlook oder Google Kalender ein und erzeugt eine Team-Einladung." data-en="After approval, AWAY automatically adds the leave to Outlook or Google Calendar and creates a team invitation.">Nach der Genehmigung trägt AWAY den Urlaub automatisch in Outlook oder Google Kalender ein und erzeugt eine Team-Einladung.</p>
+        </div>
+      </div>
     </div>
   </section>
 
-  <!-- Features Bento Grid -->
-  <section id="features" class="py-32">
-    <div class="max-w-7xl mx-auto px-6">
-        <div class="text-center mb-20 reveal">
-            <h2 class="text-4xl md:text-5xl font-black text-slate-900 mb-4 font-display tracking-tight">Alles was euer Team braucht.</h2>
-            <p class="text-slate-500 text-lg">Keine Kompromisse. Nur die besten Tools für eure Planung.</p>
+  <!-- ═══ HAUPTFUNKTIONEN (BENTO GRID) ═════════════════════════ -->
+  <section id="features" class="py-28 bg-white">
+    <div class="max-w-7xl mx-auto px-5">
+      <div class="text-center mb-16 reveal">
+        <div class="section-chip mb-5" data-de="Kernfunktionen" data-en="Core features">Kernfunktionen</div>
+        <h2 class="text-4xl md:text-5xl font-black text-slate-900 font-display tracking-tight mb-4" data-de="Was AWAY wirklich kann." data-en="What AWAY really does.">Was AWAY wirklich kann.</h2>
+        <p class="text-slate-500 text-lg max-w-xl mx-auto" data-de="Echte Funktionen aus der App – keine Marketingversprechen." data-en="Real features from the app – no marketing promises.">Echte Funktionen aus der App – keine Marketingversprechen.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+        <!-- CARD 1: Antragstellung (large, 2-col) -->
+        <div class="bento-card lg:col-span-2 p-8 reveal">
+          <div class="flex flex-col h-full">
+            <div class="w-12 h-12 rounded-2xl bg-indigo-600 flex items-center justify-center mb-5 shadow-lg shadow-indigo-100">
+              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+            </div>
+            <h3 class="text-2xl font-bold text-slate-900 mb-2" data-de="Geführte Antragstellung" data-en="Guided request wizard">Geführte Antragstellung</h3>
+            <p class="text-slate-500 mb-6" data-de="Der 4-Schritte-Wizard führt durch Vorlagenauswahl, Dateneingabe, Dokumentvorschau und Versand. Felder wie Personalnummer und Belegnummer werden automatisch befüllt." data-en="The 4-step wizard guides through template selection, data entry, document preview and submission. Fields like employee ID and reference number are auto-filled.">Der 4-Schritte-Wizard führt durch Vorlagenauswahl, Dateneingabe, Dokumentvorschau und Versand. Felder wie Personalnummer und Belegnummer werden automatisch befüllt.</p>
+            <!-- Wizard Mockup -->
+            <div class="mt-auto bg-slate-50 rounded-2xl p-5 border border-slate-100">
+              <div class="flex gap-2 mb-4">
+                <div class="flex-1 h-1.5 rounded-full bg-indigo-600"></div>
+                <div class="flex-1 h-1.5 rounded-full bg-indigo-400"></div>
+                <div class="flex-1 h-1.5 rounded-full bg-slate-200"></div>
+                <div class="flex-1 h-1.5 rounded-full bg-slate-200"></div>
+              </div>
+              <div class="text-xs font-semibold text-indigo-600 mb-3" data-de="Schritt 2 von 4 – Antragsdaten" data-en="Step 2 of 4 – Request data">Schritt 2 von 4 – Antragsdaten</div>
+              <div class="grid grid-cols-2 gap-3">
+                <div class="bg-white rounded-xl p-3 border border-slate-200">
+                  <div class="text-[10px] text-slate-400 font-semibold uppercase tracking-wide mb-1.5" data-de="Personalnummer" data-en="Employee ID">Personalnummer</div>
+                  <div class="text-sm font-bold text-indigo-600">EMP-2024-047</div>
+                </div>
+                <div class="bg-white rounded-xl p-3 border border-slate-200">
+                  <div class="text-[10px] text-slate-400 font-semibold uppercase tracking-wide mb-1.5" data-de="Belegnummer" data-en="Reference No.">Belegnummer</div>
+                  <div class="text-sm font-bold text-slate-400 italic" data-de="auto-generiert" data-en="auto-generated">auto-generiert</div>
+                </div>
+                <div class="bg-white rounded-xl p-3 border border-slate-200">
+                  <div class="text-[10px] text-slate-400 font-semibold uppercase tracking-wide mb-1.5" data-de="Von – Bis" data-en="From – To">Von – Bis</div>
+                  <div class="text-sm font-semibold text-slate-700">07.07. – 18.07.26</div>
+                </div>
+                <div class="bg-white rounded-xl p-3 border border-slate-200">
+                  <div class="text-[10px] text-slate-400 font-semibold uppercase tracking-wide mb-1.5" data-de="Urlaubsart" data-en="Leave type">Urlaubsart</div>
+                  <div class="text-sm font-semibold text-slate-700" data-de="Bezahlter Urlaub" data-en="Paid leave">Bezahlter Urlaub</div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <!-- Bento Box 1: Large -->
-            <div class="md:col-span-2 glass-card rounded-[32px] p-10 flex flex-col justify-between hover:border-indigo-200 transition-colors group reveal">
-                <div>
-                   <div class="w-14 h-14 bg-indigo-600 rounded-2xl flex items-center justify-center mb-8 shadow-lg shadow-indigo-100 group-hover:scale-110 transition-transform">
-                       <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                   </div>
-                   <h3 class="text-3xl font-bold mb-4">Intelligenter Kalender-Sync</h3>
-                   <p class="text-slate-500 text-lg max-w-md">Verbinde AWAY mit Outlook oder Google Kalender. Urlaube werden automatisch eingetragen und Team-Einladungen generiert. Kein manuelles Kopieren mehr.</p>
-                </div>
-                <div class="mt-12 overflow-hidden rounded-2xl border border-slate-100 shadow-sm transition-transform group-hover:translate-y-2">
-                    <img src="https://images.unsplash.com/photo-1506784983877-45594efa4cbe?auto=format&fit=crop&q=80&w=800" alt="Kalender Sync" class="w-full h-48 object-cover object-top opacity-80 group-hover:opacity-100 transition-opacity">
-                </div>
+        <!-- CARD 2: E-Mail Versand -->
+        <div class="bento-card p-8 reveal">
+          <div class="w-12 h-12 rounded-2xl bg-violet-600 flex items-center justify-center mb-5 shadow-lg shadow-violet-100">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+          </div>
+          <h3 class="text-xl font-bold text-slate-900 mb-2" data-de="E-Mail-Versand per OAuth2" data-en="Email dispatch via OAuth2">E-Mail-Versand per OAuth2</h3>
+          <p class="text-slate-500 text-sm mb-5" data-de="AWAY verbindet sich direkt mit deinem Google- oder Microsoft-Konto (echter OAuth2-Flow) und versendet den fertigen Antrag inkl. AcroForm-PDF-Anhang." data-en="AWAY connects directly to your Google or Microsoft account (real OAuth2 flow) and sends the completed request including AcroForm PDF attachment.">AWAY verbindet sich direkt mit deinem Google- oder Microsoft-Konto und versendet den fertigen Antrag inkl. AcroForm-PDF-Anhang.</p>
+          <!-- OAuth connect UI mockup -->
+          <div class="space-y-2.5 mt-auto">
+            <div class="flex items-center gap-3 bg-slate-50 rounded-xl p-3 border border-slate-200">
+              <svg width="16" height="16" viewBox="0 0 48 48"><path fill="#4285F4" d="M43.6 20.5H42V20H24v8h11.3C33.9 32.3 29.4 35 24 35c-6.1 0-11-4.9-11-11s4.9-11 11-11c2.8 0 5.3 1 7.2 2.7l5.7-5.7C33.9 7.2 29.2 5 24 5 13 5 4 14 4 25s9 20 20 20c11 0 20-9 20-20 0-1.2-.1-2.5-.4-4.5z"/><path fill="#34A853" d="M6.3 15.7l6.6 4.8C14.5 17 19 14 24 14c2.8 0 5.3 1 7.2 2.7l5.7-5.7C33.9 7.2 29.2 5 24 5c-7.7 0-14.3 4.5-17.7 10.7z"/><path fill="#FBBC05" d="M24 45c5.2 0 9.9-2 13.4-5.2l-6.2-5.2A12 12 0 0124 36c-5.4 0-9.9-2.7-11.3-6.5l-6.6 4.8C9.7 40.5 16.3 45 24 45z"/><path fill="#EA4335" d="M43.6 20.5H42V20H24v8h11.3C34.9 30.8 33 32.7 30.8 34l6.2 5.2C41 35.5 44 30.7 44 25c0-1.5-.2-2.9-.4-4.5z"/></svg>
+              <span class="text-xs font-semibold text-slate-600">Gmail / Google Workspace</span>
+              <div class="ml-auto flex items-center gap-1.5">
+                <div class="w-2 h-2 rounded-full bg-emerald-500"></div>
+                <span class="text-[10px] font-bold text-emerald-600" data-de="Verbunden" data-en="Connected">Verbunden</span>
+              </div>
             </div>
-
-            <!-- Bento Box 2: Small -->
-            <div class="glass-card rounded-[32px] p-10 flex flex-col justify-between hover:border-indigo-200 transition-colors group reveal">
-                <div>
-                   <div class="w-14 h-14 bg-white border border-slate-200 rounded-2xl flex items-center justify-center mb-8 shadow-sm group-hover:scale-110 transition-transform">
-                       <svg class="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
-                   </div>
-                   <h3 class="text-2xl font-bold mb-4">Enterprise Security</h3>
-                   <p class="text-slate-500">Supabase Auth, rollenbasierte Zugriffssteuerung und 100% DSGVO-konform. Deine Daten sind sicher.</p>
-                </div>
+            <div class="flex items-center gap-3 bg-slate-50 rounded-xl p-3 border border-slate-200">
+              <svg width="16" height="16" viewBox="0 0 23 23" fill="none"><path d="M1 1h9.5v9.5H1z" fill="#f25022"/><path d="M12.5 1H22v9.5h-9.5z" fill="#7fba00"/><path d="M1 12.5h9.5V22H1z" fill="#00a4ef"/><path d="M12.5 12.5H22V22h-9.5z" fill="#ffb900"/></svg>
+              <span class="text-xs font-semibold text-slate-600">Microsoft 365 / Outlook</span>
+              <div class="ml-auto flex items-center gap-1.5">
+                <div class="w-2 h-2 rounded-full bg-slate-300"></div>
+                <span class="text-[10px] font-semibold text-slate-400" data-de="Verbinden" data-en="Connect">Verbinden</span>
+              </div>
             </div>
-
-             <!-- Bento Box 3: Medium -->
-             <div class="glass-card rounded-[32px] p-10 flex flex-col justify-between hover:border-indigo-200 transition-colors group reveal">
-                <div>
-                   <div class="w-14 h-14 bg-white border border-slate-200 rounded-2xl flex items-center justify-center mb-8 shadow-sm group-hover:scale-110 transition-transform">
-                       <svg class="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
-                   </div>
-                   <h3 class="text-2xl font-bold mb-4">Multi-Organisation</h3>
-                   <p class="text-slate-500">Verwalte verschiedene Abteilungen oder Firmen unter einem Dach. Flexible Rollen für Admins und Mitarbeiter.</p>
-                </div>
+            <div class="flex items-center gap-2 mt-2 px-1">
+              <svg class="w-4 h-4 text-amber-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/></svg>
+              <span class="text-[11px] text-slate-400" data-de="Antrag wird als PDF-Anhang versendet" data-en="Request is sent as PDF attachment">Antrag wird als PDF-Anhang versendet</span>
             </div>
+          </div>
+        </div>
 
-            <!-- Bento Box 4: Wide -->
-            <div class="md:col-span-2 glass-card rounded-[32px] p-10 flex flex-col justify-between hover:border-indigo-200 transition-colors group reveal">
-                <div class="flex flex-col md:flex-row gap-10 items-center">
-                    <div class="flex-1">
-                        <div class="w-14 h-14 bg-indigo-600 rounded-2xl flex items-center justify-center mb-8 shadow-lg shadow-indigo-100 group-hover:scale-110 transition-transform">
-                            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                        </div>
-                        <h3 class="text-3xl font-bold mb-4">Automatisierter E-Mail Versand</h3>
-                        <p class="text-slate-500 text-lg">Direkte Benachrichtigungen bei neuen Anträgen. Bestätigungen an Mitarbeiter gehen automatisch raus via Resend & OAuth2 Integration.</p>
+        <!-- CARD 3: Eigene Vorlagen -->
+        <div class="bento-card p-8 reveal">
+          <div class="w-12 h-12 rounded-2xl bg-amber-500 flex items-center justify-center mb-5 shadow-lg shadow-amber-100">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+          </div>
+          <h3 class="text-xl font-bold text-slate-900 mb-2" data-de="AcroForm-PDF Vorlagen" data-en="AcroForm PDF templates">AcroForm-PDF Vorlagen</h3>
+          <p class="text-slate-500 text-sm mb-5" data-de="Lade deine bestehenden AcroForm-PDF Vorlagen hoch. AWAY befüllt die Formularfelder direkt per Feldzuweisung – kein Platzhalter-Parsing, stabiler Export ohne Formatverlust." data-en="Upload your existing AcroForm PDF templates. AWAY fills the form fields directly via field assignment – no placeholder parsing, stable export without formatting loss.">Lade deine AcroForm-PDF Vorlagen hoch. AWAY befüllt die Formularfelder direkt per Feldzuweisung – stabiler Export ohne Formatverlust.</p>
+          <!-- AcroForm-PDF mockup -->
+          <div class="mt-auto">
+            <div class="flex items-center gap-4 bg-red-50 border-2 border-red-200 rounded-2xl p-4">
+              <div class="w-12 h-14 bg-white border border-red-200 rounded-lg shadow-sm flex flex-col items-center justify-center gap-1">
+                <svg class="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+                <span class="text-[8px] font-black text-red-600">PDF</span>
+              </div>
+              <div>
+                <div class="font-bold text-sm text-slate-800" data-de="AcroForm-PDF" data-en="AcroForm PDF">AcroForm-PDF</div>
+                <div class="text-xs text-slate-500 mt-0.5" data-de="Direkte Feldzuweisung · Stabiler Export" data-en="Direct field assignment · Stable export">Direkte Feldzuweisung · Stabiler Export</div>
+                <div class="flex gap-1 mt-2">
+                  <span class="text-[9px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700" data-de="Formularfelder auto-befüllt" data-en="Form fields auto-filled">Formularfelder auto-befüllt</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CARD 4: Kalender & Sync (large, 2-col) -->
+        <div class="bento-card lg:col-span-2 p-8 reveal">
+          <div class="flex flex-col md:flex-row gap-8 h-full">
+            <div class="flex-1">
+              <div class="w-12 h-12 rounded-2xl bg-emerald-600 flex items-center justify-center mb-5 shadow-lg shadow-emerald-100">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+              </div>
+              <h3 class="text-2xl font-bold text-slate-900 mb-2" data-de="Eingebetteter Kalender &amp; Sync" data-en="Embedded calendar &amp; sync">Eingebetteter Kalender &amp; Sync</h3>
+              <p class="text-slate-500 mb-5" data-de="AWAY enthält einen vollständigen Monats-/Wochenkalender für Team-Abwesenheiten. Bei Genehmigung wird der Urlaub automatisch per OAuth2 in Outlook oder Google Kalender eingetragen – inklusive Team-Einladung." data-en="AWAY includes a full month/week calendar for team absences. Upon approval, leave is automatically entered via OAuth2 in Outlook or Google Calendar – including team invitation.">AWAY enthält einen vollständigen Monats-/Wochenkalender. Bei Genehmigung wird der Urlaub automatisch per OAuth2 in Outlook oder Google eingetragen – mit Team-Einladung.</p>
+              <div class="flex flex-wrap gap-2">
+                <div class="flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-full px-3 py-1.5">
+                  <svg width="14" height="14" viewBox="0 0 23 23" fill="none"><path d="M1 1h9.5v9.5H1z" fill="#f25022"/><path d="M12.5 1H22v9.5h-9.5z" fill="#7fba00"/><path d="M1 12.5h9.5V22H1z" fill="#00a4ef"/><path d="M12.5 12.5H22V22h-9.5z" fill="#ffb900"/></svg>
+                  <span class="text-xs font-semibold text-slate-600">Outlook-Sync</span>
+                </div>
+                <div class="flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-full px-3 py-1.5">
+                  <svg width="14" height="14" viewBox="0 0 48 48"><path fill="#4285F4" d="M43.6 20.5H42V20H24v8h11.3C33.9 32.3 29.4 35 24 35c-6.1 0-11-4.9-11-11s4.9-11 11-11c2.8 0 5.3 1 7.2 2.7l5.7-5.7C33.9 7.2 29.2 5 24 5 13 5 4 14 4 25s9 20 20 20c11 0 20-9 20-20 0-1.2-.1-2.5-.4-4.5z"/><path fill="#34A853" d="M6.3 15.7l6.6 4.8C14.5 17 19 14 24 14c2.8 0 5.3 1 7.2 2.7l5.7-5.7C33.9 7.2 29.2 5 24 5c-7.7 0-14.3 4.5-17.7 10.7z"/><path fill="#FBBC05" d="M24 45c5.2 0 9.9-2 13.4-5.2l-6.2-5.2A12 12 0 0124 36c-5.4 0-9.9-2.7-11.3-6.5l-6.6 4.8C9.7 40.5 16.3 45 24 45z"/><path fill="#EA4335" d="M43.6 20.5H42V20H24v8h11.3C34.9 30.8 33 32.7 30.8 34l6.2 5.2C41 35.5 44 30.7 44 25c0-1.5-.2-2.9-.4-4.5z"/></svg>
+                  <span class="text-xs font-semibold text-slate-600">Google Kalender</span>
+                </div>
+                <div class="flex items-center gap-2 bg-emerald-50 border border-emerald-200 rounded-full px-3 py-1.5">
+                  <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                  <span class="text-xs font-semibold text-emerald-700" data-de="Team-Einladung" data-en="Team invitation">Team-Einladung</span>
+                </div>
+              </div>
+            </div>
+            <!-- Mini calendar mockup -->
+            <div class="flex-shrink-0 bg-slate-50 rounded-2xl p-4 border border-slate-100 w-full md:w-56">
+              <div class="text-xs font-bold text-slate-700 mb-3 text-center">April 2026</div>
+              <div class="grid grid-cols-7 gap-1">
+                <div class="text-center text-[9px] text-slate-400 font-semibold">Mo</div><div class="text-center text-[9px] text-slate-400 font-semibold">Di</div><div class="text-center text-[9px] text-slate-400 font-semibold">Mi</div><div class="text-center text-[9px] text-slate-400 font-semibold">Do</div><div class="text-center text-[9px] text-slate-400 font-semibold">Fr</div><div class="text-center text-[9px] text-slate-400 font-semibold">Sa</div><div class="text-center text-[9px] text-slate-400 font-semibold">So</div>
+                <div class="text-center text-[9px] text-slate-300 py-1">31</div>
+                <div class="text-center text-[9px] text-slate-600 py-1">1</div><div class="text-center text-[9px] text-slate-600 py-1">2</div><div class="text-center text-[9px] text-slate-600 py-1">3</div><div class="text-center text-[9px] text-slate-600 py-1">4</div>
+                <div class="text-center text-[9px] bg-amber-100 text-amber-700 font-bold py-1 rounded">5</div><div class="text-center text-[9px] bg-amber-100 text-amber-700 font-bold py-1 rounded">6</div>
+                <div class="text-center text-[9px] bg-indigo-100 text-indigo-700 font-bold py-1 rounded">7</div><div class="text-center text-[9px] bg-indigo-100 text-indigo-700 font-bold py-1 rounded">8</div><div class="text-center text-[9px] bg-indigo-100 text-indigo-700 font-bold py-1 rounded">9</div><div class="text-center text-[9px] bg-indigo-100 text-indigo-700 font-bold py-1 rounded">10</div><div class="text-center text-[9px] bg-indigo-100 text-indigo-700 font-bold py-1 rounded">11</div>
+                <div class="text-center text-[9px] text-slate-300 py-1">12</div><div class="text-center text-[9px] text-slate-300 py-1">13</div>
+                <div class="text-center text-[9px] text-slate-600 py-1">14</div><div class="text-center text-[9px] bg-indigo-600 text-white font-bold py-1 rounded-full">15</div><div class="text-center text-[9px] bg-emerald-100 text-emerald-700 font-bold py-1 rounded">16</div><div class="text-center text-[9px] bg-emerald-100 text-emerald-700 font-bold py-1 rounded">17</div><div class="text-center text-[9px] bg-emerald-100 text-emerald-700 font-bold py-1 rounded">18</div>
+                <div class="text-center text-[9px] text-slate-300 py-1">19</div><div class="text-center text-[9px] text-slate-300 py-1">20</div>
+              </div>
+              <div class="flex gap-2 mt-3 flex-wrap">
+                <div class="flex items-center gap-1"><div class="w-2 h-2 rounded-full bg-indigo-400"></div><span class="text-[9px] text-slate-500">Genehmigt</span></div>
+                <div class="flex items-center gap-1"><div class="w-2 h-2 rounded-full bg-amber-400"></div><span class="text-[9px] text-slate-500">Ausstehend</span></div>
+                <div class="flex items-center gap-1"><div class="w-2 h-2 rounded-full bg-emerald-400"></div><span class="text-[9px] text-slate-500">Urlaub</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ APP SHOWCASE ══════════════════════════════════════════ -->
+  <section id="showcase" style="background:#070b14;" class="py-28 overflow-hidden">
+    <div class="max-w-7xl mx-auto px-5">
+      <div class="text-center mb-12 reveal">
+        <div class="section-chip section-chip-dark mb-5" data-de="Live App-Ansicht" data-en="Live app view">Live App-Ansicht</div>
+        <h2 class="text-4xl md:text-5xl font-black text-white font-display tracking-tight mb-4" data-de="Die echte Oberfläche." data-en="The real interface.">Die echte Oberfläche.</h2>
+        <p class="text-white/45 text-lg max-w-xl mx-auto" data-de="Keine Marketing-Mockups – echte UI-Elemente aus der AWAY-Anwendung." data-en="No marketing mockups – real UI elements from the AWAY application.">Keine Marketing-Mockups – echte UI-Elemente aus der AWAY-Anwendung.</p>
+      </div>
+
+      <!-- Tab buttons -->
+      <div class="flex items-center gap-2 overflow-x-auto pb-2 mb-6 justify-center reveal">
+        <button class="tab-btn active" data-tab="dashboard" data-de="Dashboard" data-en="Dashboard">Dashboard</button>
+        <button class="tab-btn" data-tab="requests" data-de="Meine Anträge" data-en="My Requests">Meine Anträge</button>
+        <button class="tab-btn" data-tab="calendar" data-de="Kalender" data-en="Calendar">Kalender</button>
+        <button class="tab-btn" data-tab="admin" data-de="Admin-Panel" data-en="Admin Panel">Admin-Panel</button>
+      </div>
+
+      <div class="reveal">
+        <!-- TAB: Dashboard -->
+        <div id="tab-dashboard" class="tab-panel active">
+          <div class="app-window">
+            <div class="app-window-bar">
+              <div class="win-dot win-dot-red"></div>
+              <div class="win-dot win-dot-yellow"></div>
+              <div class="win-dot win-dot-green"></div>
+              <div class="win-url">away.app/dashboard</div>
+            </div>
+            <div class="app-window-body">
+              <div class="app-sidebar">
+                <div class="sidebar-logo-row">
+                  <div class="sidebar-logo-icon">
+                    <svg class="w-3.5 h-3.5 text-white" viewBox="0 0 24 24" fill="currentColor"><path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></svg>
+                  </div>
+                  <span class="sidebar-logo-text">AWAY</span>
+                </div>
+                <div class="sidebar-nav-item active"><div class="nav-dot active"></div>Dashboard</div>
+                <div class="sidebar-nav-item"><div class="nav-dot"></div>Kalender</div>
+                <div class="sidebar-nav-item"><div class="nav-dot"></div>Meine Anträge</div>
+                <div class="sidebar-nav-item"><div class="nav-dot"></div>Organisationen</div>
+                <div style="margin-top:auto; padding-top:8px; border-top:1px solid rgba(255,255,255,0.06);">
+                  <div class="sidebar-nav-item" style="font-size:10px;opacity:.6;"><div class="nav-dot"></div>Admin-Panel</div>
+                  <div class="sidebar-nav-item" style="font-size:10px;opacity:.6;"><div class="nav-dot"></div>Berichte</div>
+                  <div class="sidebar-nav-item" style="font-size:10px;opacity:.6;"><div class="nav-dot"></div>Einstellungen</div>
+                </div>
+              </div>
+              <div class="app-content">
+                <div class="content-title" data-de="Guten Morgen, Max 👋" data-en="Good morning, Max 👋">Guten Morgen, Max 👋</div>
+                <div class="grid grid-cols-3 gap-3 mb-4">
+                  <div class="glass-card-dark rounded-xl p-3">
+                    <div style="font-size:9px;color:rgba(255,255,255,0.35);font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;" data-de="Ausstehend" data-en="Pending">Ausstehend</div>
+                    <div style="font-size:22px;font-weight:800;color:#f59e0b;font-family:'Outfit',sans-serif;">3</div>
+                  </div>
+                  <div class="glass-card-dark rounded-xl p-3">
+                    <div style="font-size:9px;color:rgba(255,255,255,0.35);font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;" data-de="Genehmigt" data-en="Approved">Genehmigt</div>
+                    <div style="font-size:22px;font-weight:800;color:#10b981;font-family:'Outfit',sans-serif;">18</div>
+                  </div>
+                  <div class="glass-card-dark rounded-xl p-3">
+                    <div style="font-size:9px;color:rgba(255,255,255,0.35);font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;" data-de="Resturlaub" data-en="Remaining">Resturlaub</div>
+                    <div style="font-size:22px;font-weight:800;color:#818cf8;font-family:'Outfit',sans-serif;">12</div>
+                  </div>
+                </div>
+                <div style="font-size:11px;font-weight:700;color:#fff;margin-bottom:8px;" data-de="Letzte Anträge" data-en="Recent requests">Letzte Anträge</div>
+                <div class="space-y-2">
+                  <div class="glass-card-dark rounded-xl p-2.5 flex items-center gap-3">
+                    <div style="width:28px;height:28px;border-radius:50%;background:rgba(99,102,241,0.3);flex-shrink:0;"></div>
+                    <div style="flex:1;">
+                      <div style="font-size:11px;font-weight:600;color:#fff;">Max Müller</div>
+                      <div style="font-size:9px;color:rgba(255,255,255,0.35);">07.07.–18.07.2026 · 10 Tage</div>
                     </div>
-                    <div class="flex-1 bg-white border border-slate-100 rounded-2xl p-6 shadow-sm transform group-hover:rotate-1 transition-transform">
-                        <div class="flex gap-3 items-center mb-4">
-                            <div class="w-8 h-8 rounded-full bg-indigo-500"></div>
-                            <div class="w-32 h-3 bg-slate-100 rounded"></div>
-                        </div>
-                        <div class="space-y-3">
-                            <div class="w-full h-8 bg-slate-50 rounded-lg border border-slate-100"></div>
-                            <div class="w-full h-8 bg-slate-50 rounded-lg border border-slate-100"></div>
-                            <div class="w-3/4 h-8 bg-indigo-50 rounded-lg border border-indigo-100"></div>
-                        </div>
+                    <span class="status-badge badge-approved">Genehmigt</span>
+                  </div>
+                  <div class="glass-card-dark rounded-xl p-2.5 flex items-center gap-3">
+                    <div style="width:28px;height:28px;border-radius:50%;background:rgba(245,158,11,0.3);flex-shrink:0;"></div>
+                    <div style="flex:1;">
+                      <div style="font-size:11px;font-weight:600;color:#fff;">Anna Schmidt</div>
+                      <div style="font-size:9px;color:rgba(255,255,255,0.35);">21.07.–25.07.2026 · 5 Tage</div>
                     </div>
+                    <span class="status-badge badge-pending">Ausstehend</span>
+                  </div>
+                  <div class="glass-card-dark rounded-xl p-2.5 flex items-center gap-3">
+                    <div style="width:28px;height:28px;border-radius:50%;background:rgba(239,68,68,0.2);flex-shrink:0;"></div>
+                    <div style="flex:1;">
+                      <div style="font-size:11px;font-weight:600;color:#fff;">Lars Becker</div>
+                      <div style="font-size:9px;color:rgba(255,255,255,0.35);">01.08.–15.08.2026 · 11 Tage</div>
+                    </div>
+                    <span class="status-badge badge-rejected">Abgelehnt</span>
+                  </div>
                 </div>
+              </div>
             </div>
+          </div>
         </div>
-    </div>
-  </section>
 
-  <!-- FAQ Section (Simplified) -->
-  <section class="py-32 bg-slate-50">
-    <div class="max-w-4xl mx-auto px-6">
-        <h2 class="text-4xl font-bold font-display text-center mb-16 reveal">Häufig gestellte Fragen</h2>
-        <div class="space-y-6">
-            <div class="glass-card p-8 rounded-2xl reveal">
-                <h3 class="text-xl font-bold mb-3">Ist AWAY wirklich kostenlos?</h3>
-                <p class="text-slate-500">Für kleine Teams bieten wir eine kostenlose Basis-Version an. Für Enterprise-Features und mehr als 10 Mitarbeiter gibt es unsere Premium-Tarife.</p>
+        <!-- TAB: Meine Anträge -->
+        <div id="tab-requests" class="tab-panel">
+          <div class="app-window">
+            <div class="app-window-bar">
+              <div class="win-dot win-dot-red"></div><div class="win-dot win-dot-yellow"></div><div class="win-dot win-dot-green"></div>
+              <div class="win-url">away.app/dashboard/requests</div>
             </div>
-            <div class="glass-card p-8 rounded-2xl reveal">
-                <h3 class="text-xl font-bold mb-3">Wie sicher sind meine Daten?</h3>
-                <p class="text-slate-500">Wir nutzen Supabase für höchste Sicherheitsstandards. Alle Daten werden in der EU gespeichert und unterliegen der DSGVO.</p>
-            </div>
-             <div class="glass-card p-8 rounded-2xl reveal">
-                <h3 class="text-xl font-bold mb-3">Wie funktioniert der Kalender-Sync?</h3>
-                <p class="text-slate-500">Einmal über den Dashboard-Link mit Outlook oder Google verbunden, synchronisieren wir deine Urlaube automatisch im Hintergrund.</p>
-            </div>
-        </div>
-    </div>
-  </section>
-
-  <!-- CTA Banner -->
-  <section class="py-32">
-    <div class="max-w-7xl mx-auto px-6">
-        <div class="bg-indigo-600 rounded-[50px] p-20 text-center text-white relative overflow-hidden shadow-2xl shadow-indigo-300 reveal">
-            <div class="absolute inset-0 bg-gradient-to-r from-indigo-700 to-purple-700 opacity-50"></div>
-            <div class="relative z-10">
-                <h2 class="text-5xl md:text-7xl font-black mb-8 font-display">Bereit für entspanntes <br/>Planen?</h2>
-                <p class="text-indigo-100 text-xl mb-12 max-w-2xl mx-auto">Sichere dir jetzt deinen Zugang und revolutioniere das Urlaubsmanagement in deinem Team.</p>
-                <div class="flex flex-wrap justify-center gap-6">
-                    <button class="bg-white text-indigo-600 px-12 py-5 rounded-3xl font-bold text-xl hover:bg-slate-50 transition-all shadow-xl active:scale-95">Jetzt kostenlos starten</button>
-                    <button class="bg-indigo-500/50 backdrop-blur-md border border-indigo-400 text-white px-12 py-5 rounded-3xl font-bold text-xl hover:bg-indigo-500 transition-all active:scale-95">Kontakt aufnehmen</button>
+            <div class="app-window-body">
+              <div class="app-sidebar">
+                <div class="sidebar-logo-row">
+                  <div class="sidebar-logo-icon"><svg class="w-3.5 h-3.5 text-white" viewBox="0 0 24 24" fill="currentColor"><path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></svg></div>
+                  <span class="sidebar-logo-text">AWAY</span>
                 </div>
+                <div class="sidebar-nav-item"><div class="nav-dot"></div>Dashboard</div>
+                <div class="sidebar-nav-item"><div class="nav-dot"></div>Kalender</div>
+                <div class="sidebar-nav-item active"><div class="nav-dot active"></div>Meine Anträge</div>
+                <div class="sidebar-nav-item"><div class="nav-dot"></div>Organisationen</div>
+              </div>
+              <div class="app-content">
+                <div class="content-title" data-de="Meine Anträge" data-en="My Requests">Meine Anträge</div>
+                <!-- Filter tabs -->
+                <div class="flex gap-2 mb-4">
+                  <div style="padding:4px 10px;border-radius:20px;background:#6366f1;color:#fff;font-size:10px;font-weight:700;" data-de="Alle" data-en="All">Alle</div>
+                  <div style="padding:4px 10px;border-radius:20px;background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.4);font-size:10px;font-weight:600;" data-de="Ausstehend" data-en="Pending">Ausstehend</div>
+                  <div style="padding:4px 10px;border-radius:20px;background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.4);font-size:10px;font-weight:600;" data-de="Genehmigt" data-en="Approved">Genehmigt</div>
+                  <div style="padding:4px 10px;border-radius:20px;background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.4);font-size:10px;font-weight:600;" data-de="Abgelehnt" data-en="Rejected">Abgelehnt</div>
+                </div>
+                <div class="space-y-2">
+                  <div class="glass-card-dark rounded-xl p-3 flex items-center gap-3">
+                    <div style="flex:1;"><div style="font-size:11px;font-weight:600;color:#fff;margin-bottom:2px;">07.07.–18.07.2026</div><div style="font-size:9px;color:rgba(255,255,255,0.35);">10 Arbeitstage · Bezahlter Urlaub</div></div>
+                    <span class="status-badge badge-approved">✓ Genehmigt</span>
+                  </div>
+                  <div class="glass-card-dark rounded-xl p-3 flex items-center gap-3">
+                    <div style="flex:1;"><div style="font-size:11px;font-weight:600;color:#fff;margin-bottom:2px;">21.07.–25.07.2026</div><div style="font-size:9px;color:rgba(255,255,255,0.35);">5 Arbeitstage · Bezahlter Urlaub</div></div>
+                    <span class="status-badge badge-pending">⏳ Ausstehend</span>
+                  </div>
+                  <div class="glass-card-dark rounded-xl p-3 flex items-center gap-3">
+                    <div style="flex:1;"><div style="font-size:11px;font-weight:600;color:#fff;margin-bottom:2px;">01.08.–15.08.2026</div><div style="font-size:9px;color:rgba(255,255,255,0.35);">11 Arbeitstage · Bezahlter Urlaub</div></div>
+                    <span class="status-badge badge-rejected">✗ Abgelehnt</span>
+                  </div>
+                  <div class="glass-card-dark rounded-xl p-3 flex items-center gap-3">
+                    <div style="flex:1;"><div style="font-size:11px;font-weight:600;color:#fff;margin-bottom:2px;">20.09.–24.09.2026</div><div style="font-size:9px;color:rgba(255,255,255,0.35);">5 Arbeitstage · Sonderurlaub</div></div>
+                    <span class="status-badge badge-approved">✓ Genehmigt</span>
+                  </div>
+                </div>
+              </div>
             </div>
+          </div>
         </div>
+
+        <!-- TAB: Kalender -->
+        <div id="tab-calendar" class="tab-panel">
+          <div class="app-window">
+            <div class="app-window-bar">
+              <div class="win-dot win-dot-red"></div><div class="win-dot win-dot-yellow"></div><div class="win-dot win-dot-green"></div>
+              <div class="win-url">away.app/dashboard/calendar</div>
+            </div>
+            <div class="app-window-body">
+              <div class="app-sidebar">
+                <div class="sidebar-logo-row">
+                  <div class="sidebar-logo-icon"><svg class="w-3.5 h-3.5 text-white" viewBox="0 0 24 24" fill="currentColor"><path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></svg></div>
+                  <span class="sidebar-logo-text">AWAY</span>
+                </div>
+                <div class="sidebar-nav-item"><div class="nav-dot"></div>Dashboard</div>
+                <div class="sidebar-nav-item active"><div class="nav-dot active"></div>Kalender</div>
+                <div class="sidebar-nav-item"><div class="nav-dot"></div>Meine Anträge</div>
+                <div class="sidebar-nav-item"><div class="nav-dot"></div>Organisationen</div>
+              </div>
+              <div class="app-content">
+                <div class="flex items-center justify-between mb-3">
+                  <div class="content-title mb-0" data-de="Juli 2026" data-en="July 2026">Juli 2026</div>
+                  <div class="flex items-center gap-2 flex-wrap">
+                    <div class="flex items-center gap-1.5 text-[10px] text-white/50"><div class="w-2.5 h-2.5 rounded-full bg-indigo-500"></div>Genehmigt</div>
+                    <div class="flex items-center gap-1.5 text-[10px] text-white/50"><div class="w-2.5 h-2.5 rounded-full bg-amber-500"></div>Ausstehend</div>
+                  </div>
+                </div>
+                <div class="grid grid-cols-7 gap-1">
+                  <div style="text-align:center;font-size:9px;color:rgba(255,255,255,0.3);font-weight:600;padding-bottom:4px;">Mo</div><div style="text-align:center;font-size:9px;color:rgba(255,255,255,0.3);font-weight:600;padding-bottom:4px;">Di</div><div style="text-align:center;font-size:9px;color:rgba(255,255,255,0.3);font-weight:600;padding-bottom:4px;">Mi</div><div style="text-align:center;font-size:9px;color:rgba(255,255,255,0.3);font-weight:600;padding-bottom:4px;">Do</div><div style="text-align:center;font-size:9px;color:rgba(255,255,255,0.3);font-weight:600;padding-bottom:4px;">Fr</div><div style="text-align:center;font-size:9px;color:rgba(255,255,255,0.3);font-weight:600;padding-bottom:4px;">Sa</div><div style="text-align:center;font-size:9px;color:rgba(255,255,255,0.3);font-weight:600;padding-bottom:4px;">So</div>
+                  <div style="text-align:center;font-size:9px;color:rgba(255,255,255,0.4);padding:4px 2px;">1</div><div style="text-align:center;font-size:9px;color:rgba(255,255,255,0.4);padding:4px 2px;">2</div><div style="text-align:center;font-size:9px;color:rgba(255,255,255,0.4);padding:4px 2px;">3</div><div style="text-align:center;font-size:9px;color:rgba(255,255,255,0.4);padding:4px 2px;">4</div><div style="text-align:center;font-size:9px;color:rgba(255,255,255,0.4);padding:4px 2px;">5</div><div style="text-align:center;font-size:9px;color:rgba(255,255,255,0.2);padding:4px 2px;">6</div><div style="text-align:center;font-size:9px;color:rgba(255,255,255,0.2);padding:4px 2px;">7</div>
+                  <div style="text-align:center;font-size:9px;background:rgba(99,102,241,0.25);color:#818cf8;font-weight:700;border-radius:5px;padding:4px 2px;">7</div><div style="text-align:center;font-size:9px;background:rgba(99,102,241,0.25);color:#818cf8;font-weight:700;border-radius:5px;padding:4px 2px;">8</div><div style="text-align:center;font-size:9px;background:rgba(99,102,241,0.25);color:#818cf8;font-weight:700;border-radius:5px;padding:4px 2px;">9</div><div style="text-align:center;font-size:9px;background:rgba(99,102,241,0.25);color:#818cf8;font-weight:700;border-radius:5px;padding:4px 2px;">10</div><div style="text-align:center;font-size:9px;background:rgba(99,102,241,0.25);color:#818cf8;font-weight:700;border-radius:5px;padding:4px 2px;">11</div><div style="text-align:center;font-size:9px;color:rgba(255,255,255,0.2);padding:4px 2px;">12</div><div style="text-align:center;font-size:9px;color:rgba(255,255,255,0.2);padding:4px 2px;">13</div>
+                  <div style="text-align:center;font-size:9px;background:rgba(99,102,241,0.25);color:#818cf8;font-weight:700;border-radius:5px;padding:4px 2px;">14</div><div style="text-align:center;font-size:9px;background:rgba(99,102,241,0.25);color:#818cf8;font-weight:700;border-radius:5px;padding:4px 2px;">15</div><div style="text-align:center;font-size:9px;background:rgba(99,102,241,0.25);color:#818cf8;font-weight:700;border-radius:5px;padding:4px 2px;">16</div><div style="text-align:center;font-size:9px;background:rgba(99,102,241,0.25);color:#818cf8;font-weight:700;border-radius:5px;padding:4px 2px;">17</div><div style="text-align:center;font-size:9px;background:rgba(99,102,241,0.25);color:#818cf8;font-weight:700;border-radius:5px;padding:4px 2px;">18</div><div style="text-align:center;font-size:9px;color:rgba(255,255,255,0.2);padding:4px 2px;">19</div><div style="text-align:center;font-size:9px;color:rgba(255,255,255,0.2);padding:4px 2px;">20</div>
+                  <div style="text-align:center;font-size:9px;color:rgba(255,255,255,0.4);padding:4px 2px;">21</div><div style="text-align:center;font-size:9px;background:rgba(245,158,11,0.2);color:#f59e0b;font-weight:700;border-radius:5px;padding:4px 2px;">22</div><div style="text-align:center;font-size:9px;background:rgba(245,158,11,0.2);color:#f59e0b;font-weight:700;border-radius:5px;padding:4px 2px;">23</div><div style="text-align:center;font-size:9px;background:rgba(245,158,11,0.2);color:#f59e0b;font-weight:700;border-radius:5px;padding:4px 2px;">24</div><div style="text-align:center;font-size:9px;background:rgba(245,158,11,0.2);color:#f59e0b;font-weight:700;border-radius:5px;padding:4px 2px;">25</div><div style="text-align:center;font-size:9px;color:rgba(255,255,255,0.2);padding:4px 2px;">26</div><div style="text-align:center;font-size:9px;color:rgba(255,255,255,0.2);padding:4px 2px;">27</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB: Admin -->
+        <div id="tab-admin" class="tab-panel">
+          <div class="app-window">
+            <div class="app-window-bar">
+              <div class="win-dot win-dot-red"></div><div class="win-dot win-dot-yellow"></div><div class="win-dot win-dot-green"></div>
+              <div class="win-url">away.app/dashboard/admin</div>
+            </div>
+            <div class="app-window-body">
+              <div class="app-sidebar">
+                <div class="sidebar-logo-row">
+                  <div class="sidebar-logo-icon"><svg class="w-3.5 h-3.5 text-white" viewBox="0 0 24 24" fill="currentColor"><path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></svg></div>
+                  <span class="sidebar-logo-text">AWAY</span>
+                </div>
+                <div class="sidebar-nav-item"><div class="nav-dot"></div>Dashboard</div>
+                <div class="sidebar-nav-item"><div class="nav-dot"></div>Kalender</div>
+                <div class="sidebar-nav-item"><div class="nav-dot"></div>Meine Anträge</div>
+                <div class="sidebar-nav-item"><div class="nav-dot"></div>Organisationen</div>
+                <div class="sidebar-nav-item active" style="color:#f59e0b;background:rgba(245,158,11,0.1);"><div class="nav-dot" style="background:#f59e0b;"></div>Admin-Panel</div>
+                <div class="sidebar-nav-item"><div class="nav-dot"></div>Berichte</div>
+              </div>
+              <div class="app-content">
+                <div class="content-title" data-de="Admin-Panel" data-en="Admin Panel">Admin-Panel</div>
+                <div class="flex items-center gap-2 mb-3 flex-wrap">
+                  <div style="padding:3px 10px;border-radius:20px;background:rgba(245,158,11,0.15);color:#f59e0b;font-size:9px;font-weight:700;border:1px solid rgba(245,158,11,0.2);" data-de="3 ausstehende Anträge" data-en="3 pending requests">3 ausstehende Anträge</div>
+                  <div style="padding:3px 10px;border-radius:20px;background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.4);font-size:9px;font-weight:600;" data-de="Vorlage hochladen" data-en="Upload template">+ Vorlage hochladen</div>
+                </div>
+                <!-- User table -->
+                <div style="font-size:9px;color:rgba(255,255,255,0.3);font-weight:600;display:grid;grid-template-columns:1fr 1fr auto;gap:8px;padding:6px 8px;text-transform:uppercase;letter-spacing:.05em;">
+                  <div data-de="Mitarbeiter" data-en="Employee">Mitarbeiter</div><div data-de="Status Antrag" data-en="Request Status">Status</div><div data-de="Rolle" data-en="Role">Rolle</div>
+                </div>
+                <div class="space-y-1.5">
+                  <div class="glass-card-dark rounded-lg p-2 flex items-center gap-3" style="display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:center;">
+                    <div style="font-size:11px;color:#fff;font-weight:600;">Max Müller</div>
+                    <span class="status-badge badge-pending" style="font-size:8px;">Ausstehend</span>
+                    <span style="font-size:8px;padding:1px 7px;border-radius:8px;background:rgba(245,158,11,0.15);color:#f59e0b;font-weight:700;">Admin</span>
+                  </div>
+                  <div class="glass-card-dark rounded-lg p-2" style="display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:center;">
+                    <div style="font-size:11px;color:#fff;font-weight:600;">Anna Schmidt</div>
+                    <span class="status-badge badge-approved" style="font-size:8px;">Genehmigt</span>
+                    <span style="font-size:8px;padding:1px 7px;border-radius:8px;background:rgba(99,102,241,0.15);color:#818cf8;font-weight:700;">User</span>
+                  </div>
+                  <div class="glass-card-dark rounded-lg p-2" style="display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:center;">
+                    <div style="font-size:11px;color:#fff;font-weight:600;">Lars Becker</div>
+                    <span class="status-badge badge-pending" style="font-size:8px;">Ausstehend</span>
+                    <span style="font-size:8px;padding:1px 7px;border-radius:8px;background:rgba(99,102,241,0.15);color:#818cf8;font-weight:700;">User</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 
-  <!-- Footer -->
-  <footer class="py-20 border-t border-slate-200">
-    <div class="max-w-7xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-12">
+  <!-- ═══ ZUSATZFUNKTIONEN ═══════════════════════════════════════ -->
+  <section id="extras" class="py-28 bg-white">
+    <div class="max-w-7xl mx-auto px-5">
+      <div class="text-center mb-14 reveal">
+        <div class="section-chip mb-5" data-de="Weitere Funktionen" data-en="More features">Weitere Funktionen</div>
+        <h2 class="text-4xl font-black text-slate-900 font-display tracking-tight mb-4" data-de="Alles, was ein Team braucht." data-en="Everything a team needs.">Alles, was ein Team braucht.</h2>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div class="glass-card rounded-2xl p-6 reveal">
+          <div class="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center mb-4"><svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg></div>
+          <h3 class="font-bold text-slate-900 mb-2" data-de="Organisationsverwaltung" data-en="Organisation management">Organisationsverwaltung</h3>
+          <p class="text-slate-500 text-sm" data-de="Mehrere Abteilungen oder Firmen unter einem Account. Nutzer können zwischen ihren Organisationen wechseln." data-en="Multiple departments or companies under one account. Users can switch between their organisations.">Mehrere Abteilungen oder Firmen unter einem Account. Nutzer können zwischen Organisationen wechseln.</p>
+        </div>
+        <div class="glass-card rounded-2xl p-6 reveal">
+          <div class="w-10 h-10 rounded-xl bg-violet-50 flex items-center justify-center mb-4"><svg class="w-5 h-5 text-violet-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg></div>
+          <h3 class="font-bold text-slate-900 mb-2" data-de="Benutzerverwaltung" data-en="User management">Benutzerverwaltung</h3>
+          <p class="text-slate-500 text-sm" data-de="Rollen Admin und User, Einladungssystem, Berechtigungssteuerung – alles im Admin-Panel." data-en="Roles Admin and User, invitation system, permission control – all in the admin panel.">Rollen Admin und User, Einladungssystem, Berechtigungssteuerung – alles im Admin-Panel.</p>
+        </div>
+        <div class="glass-card rounded-2xl p-6 reveal">
+          <div class="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center mb-4"><svg class="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg></div>
+          <h3 class="font-bold text-slate-900 mb-2" data-de="Nutzer-Einstellungen" data-en="User settings">Nutzer-Einstellungen</h3>
+          <p class="text-slate-500 text-sm" data-de="Name, Personalnummer, E-Mail und bevorzugter Kalender-Provider können dauerhaft hinterlegt werden – Anträge werden automatisch vorausgefüllt." data-en="Name, employee ID, email and preferred calendar provider can be stored permanently – requests are auto pre-filled.">Name, Personalnummer und bevorzugter Kalender-Provider hinterlegbar. Anträge werden automatisch vorausgefüllt.</p>
+        </div>
+        <div class="glass-card rounded-2xl p-6 reveal">
+          <div class="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center mb-4"><svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg></div>
+          <h3 class="font-bold text-slate-900 mb-2" data-de="Berichte (Admin)" data-en="Reports (Admin)">Berichte (Admin)</h3>
+          <p class="text-slate-500 text-sm" data-de="Admins sehen Auslastungsübersichten, Urlaubsstatus pro Mitarbeiter und Kontingentauswertungen." data-en="Admins see capacity overviews, leave status per employee and quota evaluations.">Admins sehen Auslastungsübersichten, Urlaubsstatus pro Mitarbeiter und Kontingentauswertungen.</p>
+        </div>
+        <div class="glass-card rounded-2xl p-6 reveal">
+          <div class="w-10 h-10 rounded-xl bg-slate-900 flex items-center justify-center mb-4"><svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg></div>
+          <h3 class="font-bold text-slate-900 mb-2" data-de="DSGVO &amp; Sicherheit" data-en="GDPR &amp; Security">DSGVO &amp; Sicherheit</h3>
+          <p class="text-slate-500 text-sm" data-de="Authentifizierung via Supabase, rollenbasierter Zugriff (RLS), Datenspeicherung ausschließlich in der EU." data-en="Authentication via Supabase, role-based access control (RLS), data storage exclusively in the EU.">Authentifizierung via Supabase, rollenbasierter Zugriff (RLS), EU-Datenspeicherung.</p>
+        </div>
+        <div class="glass-card rounded-2xl p-6 reveal">
+          <div class="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center mb-4"><svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zm0 8a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zm12 0a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"/></svg></div>
+          <h3 class="font-bold text-slate-900 mb-2" data-de="TeamRadar-Integration" data-en="TeamRadar integration">TeamRadar-Integration</h3>
+          <p class="text-slate-500 text-sm" data-de="AWAY ist als Micro-Frontend in TeamRadar eingebettet – direkter Absprung oder InApp-Nutzung über das App-Portal." data-en="AWAY is embedded as a micro-frontend in TeamRadar – direct jump-out or in-app use via the app portal.">AWAY ist als Micro-Frontend in TeamRadar eingebettet – InApp-Nutzung oder direkter Absprung möglich.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ ROI RECHNER ═══════════════════════════════════════════ -->
+  <section id="roi" style="background:#070b14;" class="py-28 relative overflow-hidden">
+    <div class="orb w-96 h-96 bg-indigo-700/20 top-0 right-0"></div>
+    <div class="max-w-7xl mx-auto px-5">
+      <div class="text-center mb-16 reveal">
+        <div class="section-chip section-chip-dark mb-5" data-de="ROI Rechner" data-en="ROI Calculator">ROI Rechner</div>
+        <h2 class="text-4xl md:text-5xl font-black text-white font-display tracking-tight mb-4" data-de="Wie viel Zeit verschwendet ihr?" data-en="How much time are you wasting?">Wie viel Zeit verschwendet ihr?</h2>
+        <p class="text-white/45 text-lg max-w-xl mx-auto" data-de="Berechnet die mögliche Ersparnis durch AWAY – transparent, ohne erfundene Zahlen." data-en="Calculate your potential savings with AWAY – transparent, no made-up numbers.">Berechnet die mögliche Ersparnis durch AWAY – transparent, ohne erfundene Zahlen.</p>
+      </div>
+      <div class="grid md:grid-cols-2 gap-12 items-center">
+        <!-- Sliders -->
+        <div class="reveal">
+          <div class="space-y-10">
+            <div>
+              <div class="flex justify-between items-center mb-3">
+                <label class="text-sm font-bold uppercase tracking-widest text-indigo-400" data-de="Anzahl Mitarbeiter" data-en="Number of employees">Anzahl Mitarbeiter</label>
+                <span id="employee-count-label" class="text-2xl font-black text-white font-display">50</span>
+              </div>
+              <input type="range" id="employee-slider" min="10" max="500" value="50">
+            </div>
+            <div>
+              <div class="flex justify-between items-center mb-3">
+                <label class="text-sm font-bold uppercase tracking-widest text-indigo-400" data-de="Anträge / Mitarbeiter / Jahr (Ø)" data-en="Requests / employee / year (avg)">Anträge / Mitarbeiter / Jahr (Ø)</label>
+                <span id="request-count-label" class="text-2xl font-black text-white font-display">5</span>
+              </div>
+              <input type="range" id="request-slider" min="1" max="15" value="5">
+            </div>
+          </div>
+          <!-- Disclaimer -->
+          <div class="mt-8 flex gap-3 p-4 rounded-2xl bg-white/4 border border-white/8">
+            <svg class="w-5 h-5 text-indigo-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            <p class="text-white/35 text-xs leading-relaxed" data-de="Schätzung: Basis ist ein durchschnittlicher manueller Verwaltungsaufwand von ~20 Min. pro Antrag (Antrag erstellen, E-Mail versenden, Kalender manuell pflegen) und ein interner Stundensatz von 50 €/h. Eigene Werte können abweichen." data-en="Estimate: Based on an average manual effort of ~20 min. per request (creating request, sending email, manually updating calendar) and an internal hourly rate of €50/h. Your actual values may differ.">Schätzung: Basis ist ein durchschnittlicher manueller Aufwand von ~20 Min. pro Antrag und ein interner Stundensatz von 50 €/h. Eigene Werte können abweichen.</p>
+          </div>
+        </div>
+        <!-- Result -->
+        <div class="relative reveal">
+          <div class="absolute inset-0 bg-indigo-600/15 blur-3xl rounded-full"></div>
+          <div class="glass-card-dark border border-white/10 p-10 rounded-3xl text-center relative">
+            <div class="text-indigo-400 text-xs font-bold uppercase tracking-widest mb-4" data-de="Geschätzte jährliche Zeitersparnis" data-en="Estimated annual time saving">Geschätzte jährliche Zeitersparnis</div>
+            <div id="savings-value" class="text-6xl font-black text-white mb-3 font-display transition-transform">2.125 €</div>
+            <div class="text-white/40 mb-8 text-sm">≈ <span id="hours-value" class="text-white font-bold">43 Std.</span> <span data-de="weniger manuelle Arbeit pro Jahr" data-en="less manual work per year">weniger manuelle Arbeit pro Jahr</span></div>
+            <a href="#pricing" class="block w-full bg-indigo-600 hover:bg-indigo-500 text-white py-4 rounded-2xl font-bold transition-all shadow-lg shadow-indigo-900/40" data-de="Jetzt Zeit sparen" data-en="Save time now">Jetzt Zeit sparen</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ PRICING ════════════════════════════════════════════════ -->
+  <section id="pricing" class="py-28 bg-slate-50">
+    <div class="max-w-7xl mx-auto px-5">
+      <div class="text-center mb-16 reveal">
+        <div class="section-chip mb-5" data-de="Preise" data-en="Pricing">Preise</div>
+        <h2 class="text-4xl md:text-5xl font-black text-slate-900 font-display tracking-tight mb-4" data-de="Einfach. Transparent. Skalierbar." data-en="Simple. Transparent. Scalable.">Einfach. Transparent. Skalierbar.</h2>
+        <p class="text-slate-500 text-lg max-w-xl mx-auto" data-de="Keine versteckten Kosten. Jederzeit kündbar." data-en="No hidden costs. Cancel at any time.">Keine versteckten Kosten. Jederzeit kündbar.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+
+        <!-- Free -->
+        <div class="pricing-card reveal">
+          <div class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-3" data-de="FREE" data-en="FREE">FREE</div>
+          <div class="text-4xl font-black text-slate-900 font-display mb-1">0 €</div>
+          <div class="text-slate-400 text-sm mb-6" data-de="Für immer kostenlos · bis 5 Nutzer" data-en="Free forever · up to 5 users">Für immer kostenlos · bis 5 Nutzer</div>
+          <a href="https://away-alpha.vercel.app/" target="_blank" rel="noopener" class="block w-full text-center border border-slate-200 hover:border-indigo-400 text-slate-700 hover:text-indigo-600 py-3 rounded-xl font-semibold text-sm transition-all mb-6" data-de="Kostenlos starten" data-en="Start free">Kostenlos starten</a>
+          <div class="space-y-1">
+            <div class="pf-row"><svg class="check-ico w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg><span data-de="Bis 5 Nutzer" data-en="Up to 5 users">Bis 5 Nutzer</span></div>
+            <div class="pf-row"><svg class="check-ico w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg><span data-de="1 Organisation" data-en="1 organisation">1 Organisation</span></div>
+            <div class="pf-row"><svg class="check-ico w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg><span data-de="AcroForm-PDF Vorlagen" data-en="AcroForm PDF templates">AcroForm-PDF Vorlagen</span></div>
+            <div class="pf-row"><svg class="check-ico w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg><span data-de="Integrierter Kalender" data-en="Embedded calendar">Integrierter Kalender</span></div>
+            <div class="pf-row"><svg class="check-ico w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg><span data-de="Antragstellung (Wizard)" data-en="Request wizard">Antragstellung (Wizard)</span></div>
+            <div class="pf-row"><svg class="cross-ico w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg><span class="text-slate-400" data-de="OAuth2 E-Mail-Versand" data-en="OAuth2 email dispatch">OAuth2 E-Mail-Versand</span></div>
+            <div class="pf-row"><svg class="cross-ico w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg><span class="text-slate-400" data-de="Kalender-Sync (Outlook/Google)" data-en="Calendar sync (Outlook/Google)">Kalender-Sync (Outlook/Google)</span></div>
+            <div class="pf-row"><svg class="cross-ico w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg><span class="text-slate-400" data-de="Admin-Panel &amp; Berichte" data-en="Admin panel &amp; reports">Admin-Panel &amp; Berichte</span></div>
+          </div>
+        </div>
+
+        <!-- Pro (featured) -->
+        <div class="pricing-card featured reveal">
+          <div class="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-indigo-600 text-white text-xs font-bold px-4 py-1.5 rounded-full shadow-lg" data-de="Empfohlen" data-en="Recommended">Empfohlen</div>
+          <div class="text-xs font-bold uppercase tracking-widest text-indigo-600 mb-3">PRO</div>
+          <div class="flex items-end gap-1 mb-1">
+            <div class="text-4xl font-black text-slate-900 font-display">6 €</div>
+            <div class="text-slate-400 text-sm mb-1.5" data-de="/ Nutzer / Monat" data-en="/ user / month">/ Nutzer / Monat</div>
+          </div>
+          <div class="text-slate-400 text-sm mb-6" data-de="Unbegrenzte Nutzer &amp; Organisationen" data-en="Unlimited users &amp; organisations">Unbegrenzte Nutzer &amp; Organisationen</div>
+          <a href="https://away-alpha.vercel.app/" target="_blank" rel="noopener" class="block w-full text-center bg-indigo-600 hover:bg-indigo-500 text-white py-3 rounded-xl font-semibold text-sm transition-all mb-6 shadow-lg shadow-indigo-100" data-de="Pro testen" data-en="Try Pro">Pro testen</a>
+          <div class="space-y-1">
+            <div class="pf-row"><svg class="check-ico w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg><span data-de="Alles aus Free" data-en="Everything in Free">Alles aus Free</span></div>
+            <div class="pf-row"><svg class="check-ico w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg><span data-de="Unbegrenzte Nutzer" data-en="Unlimited users">Unbegrenzte Nutzer</span></div>
+            <div class="pf-row"><svg class="check-ico w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg><span data-de="Unbegrenzte Organisationen" data-en="Unlimited organisations">Unbegrenzte Organisationen</span></div>
+            <div class="pf-row"><svg class="check-ico w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg><span data-de="AcroForm-PDF Vorlagen" data-en="AcroForm PDF templates">AcroForm-PDF Vorlagen</span></div>
+            <div class="pf-row"><svg class="check-ico w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg><span data-de="OAuth2 E-Mail (Google &amp; Microsoft)" data-en="OAuth2 email (Google &amp; Microsoft)">OAuth2 E-Mail (Google &amp; Microsoft)</span></div>
+            <div class="pf-row"><svg class="check-ico w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg><span data-de="Kalender-Sync + Team-Einladung" data-en="Calendar sync + team invitation">Kalender-Sync + Team-Einladung</span></div>
+            <div class="pf-row"><svg class="check-ico w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg><span data-de="Admin-Panel &amp; Benutzerverwaltung" data-en="Admin panel &amp; user management">Admin-Panel &amp; Benutzerverwaltung</span></div>
+            <div class="pf-row"><svg class="check-ico w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg><span data-de="Berichte &amp; Auslastungsübersichten" data-en="Reports &amp; capacity views">Berichte &amp; Auslastungsübersichten</span></div>
+            <div class="pf-row"><svg class="check-ico w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg><span data-de="Prioritäts-Support" data-en="Priority support">Prioritäts-Support</span></div>
+          </div>
+        </div>
+
+        <!-- Innovation Package -->
+        <div class="innovation-card reveal">
+          <div class="relative z-10">
+            <div class="text-xs font-bold uppercase tracking-widest text-indigo-400 mb-3">INNOVATION PACKAGE</div>
+            <div class="text-3xl font-black text-white font-display mb-1" data-de="Auf Anfrage" data-en="On request">Auf Anfrage</div>
+            <div class="text-white/40 text-sm mb-6" data-de="AWAY + TRACE + TeamRadar im Bundle" data-en="AWAY + TRACE + TeamRadar bundle">AWAY + TRACE + TeamRadar im Bundle</div>
+            <a href="#" onclick="openContactModal();return false;" class="block w-full text-center border border-indigo-500/50 hover:border-indigo-400 text-indigo-300 hover:text-white py-3 rounded-xl font-semibold text-sm transition-all mb-6" data-de="Beratung anfragen" data-en="Request consultation">Beratung anfragen</a>
+            <div class="space-y-1">
+              <div class="pf-row" style="border-color:rgba(255,255,255,0.05);color:rgba(255,255,255,0.65);">
+                <svg class="check-ico w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                <span data-de="Alles aus Pro" data-en="Everything in Pro">Alles aus Pro</span>
+              </div>
+              <div class="pf-row" style="border-color:rgba(255,255,255,0.05);color:rgba(255,255,255,0.65);">
+                <svg class="check-ico w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                <span><strong class="text-white">TRACE</strong> <span data-de="– Zeiterfassung (intern &amp; extern)" data-en="– Time tracking (internal &amp; external)">– Zeiterfassung (intern &amp; extern)</span></span>
+              </div>
+              <div class="pf-row" style="border-color:rgba(255,255,255,0.05);color:rgba(255,255,255,0.65);">
+                <svg class="check-ico w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                <span><strong class="text-white">TeamRadar</strong> <span data-de="– Verfügbarkeit &amp; Auslastung" data-en="– Availability &amp; capacity">– Verfügbarkeit &amp; Auslastung</span></span>
+              </div>
+              <div class="pf-row" style="border-color:rgba(255,255,255,0.05);color:rgba(255,255,255,0.65);">
+                <svg class="check-ico w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                <span data-de="Zentrales App-Portal (InApp oder Direktlink)" data-en="Central app portal (in-app or direct link)">Zentrales App-Portal (InApp oder Direktlink)</span>
+              </div>
+              <div class="pf-row" style="border-color:rgba(255,255,255,0.05);color:rgba(255,255,255,0.65);">
+                <svg class="check-ico w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                <span data-de="Dediziertes Onboarding" data-en="Dedicated onboarding">Dediziertes Onboarding</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ FAQ ════════════════════════════════════════════════════ -->
+  <section id="faq" class="py-28 bg-white">
+    <div class="max-w-3xl mx-auto px-5">
+      <div class="text-center mb-12 reveal">
+        <div class="section-chip mb-5" data-de="FAQ" data-en="FAQ">FAQ</div>
+        <h2 class="text-4xl font-black text-slate-900 font-display tracking-tight" data-de="Häufige Fragen." data-en="Frequently asked questions.">Häufige Fragen.</h2>
+      </div>
+      <div class="space-y-3 reveal">
+
+        <div class="faq-item">
+          <button class="faq-question" data-de="Wo werden meine Daten gespeichert?" data-en="Where is my data stored?">Wo werden meine Daten gespeichert?
+            <svg class="faq-chevron w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </button>
+          <div class="faq-answer" data-de="AWAY nutzt Supabase als Backend (Auth &amp; Datenbank). Die Datenspeicherung erfolgt ausschließlich auf EU-Servern. Die App ist vollständig DSGVO-konform entwickelt." data-en="AWAY uses Supabase as backend (auth &amp; database). Data is stored exclusively on EU servers. The app is fully GDPR-compliant.">AWAY nutzt Supabase als Backend (Auth &amp; Datenbank). Die Datenspeicherung erfolgt ausschließlich auf EU-Servern. Die App ist vollständig DSGVO-konform entwickelt.</div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" data-de="Wie verbinde ich Outlook oder Google Kalender?" data-en="How do I connect Outlook or Google Calendar?">Wie verbinde ich Outlook oder Google Kalender?
+            <svg class="faq-chevron w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </button>
+          <div class="faq-answer" data-de="In den App-Einstellungen können Nutzer ihr Google- oder Microsoft-Konto per OAuth2 verbinden. Danach werden Urlaubseinträge nach Genehmigung automatisch synchronisiert und Team-Einladungen versendet. Der OAuth2-Flow ist in der App vollständig implementiert." data-en="In the app settings, users can connect their Google or Microsoft account via OAuth2. After that, approved leave is automatically synced and team invitations are sent. The OAuth2 flow is fully implemented in the app.">In den Einstellungen können Nutzer ihr Google- oder Microsoft-Konto per OAuth2 verbinden. Nach Genehmigung werden Einträge automatisch synchronisiert und Team-Einladungen versendet.</div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" data-de="Welche Vorlagen-Formate werden unterstützt?" data-en="Which template formats are supported?">Welche Vorlagen-Formate werden unterstützt?
+            <svg class="faq-chevron w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </button>
+          <div class="faq-answer" data-de="AWAY verwendet ausschließlich AcroForm-PDF als Vorlagenformat. Eigene AcroForm-PDF Vorlagen hochladen – AWAY befüllt die Felder direkt per Feldzuweisung ohne Platzhalter-Parsing (Name, Zeitraum, Personalnummer, Belegnummer etc.)." data-en="AWAY exclusively uses AcroForm PDF as the template format. Upload your own AcroForm PDF templates – AWAY fills the fields directly via field assignment without placeholder parsing.">AWAY verwendet ausschließlich AcroForm-PDF. Vorlagen hochladen – AWAY befüllt die Felder direkt per Feldzuweisung ohne Platzhalter-Parsing.</div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" data-de="Was unterscheidet Free von Pro?" data-en="What's the difference between Free and Pro?">Was unterscheidet Free von Pro?
+            <svg class="faq-chevron w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </button>
+          <div class="faq-answer" data-de="Free ist für kleine Teams bis 5 Nutzer mit 1 Organisation und unterstützt AcroForm-PDF Vorlagen ohne automatischen E-Mail- oder Kalender-Sync. Pro hebt alle Grenzen auf: unbegrenzte Nutzer und Organisationen, OAuth2 E-Mail-Versand, Outlook- &amp; Google-Kalender-Sync, AcroForm-PDF Vorlagen, Admin-Panel und Berichte." data-en="Free is for small teams up to 5 users with 1 organisation and supports AcroForm PDF templates without automatic email or calendar sync. Pro removes all limits: unlimited users and organisations, OAuth2 email dispatch, Outlook &amp; Google calendar sync, AcroForm PDF templates, admin panel and reports.">Free: bis 5 Nutzer, 1 Org, AcroForm-PDF, kein Auto-Sync. Pro: unbegrenzte Nutzer, OAuth2 E-Mail, Kalender-Sync, Admin, Berichte.</div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" data-de="Was ist das Innovation Package?" data-en="What is the Innovation Package?">Was ist das Innovation Package?
+            <svg class="faq-chevron w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </button>
+          <div class="faq-answer" data-de="Das Innovation Package bündelt drei Apps: AWAY (Urlaubsplanung), TRACE (Zeiterfassung intern &amp; extern) und TeamRadar (Echtzeit-Verfügbarkeit &amp; Auslastung). TeamRadar dient als zentrale Plattform, in der AWAY und TRACE per App-Portal eingebettet sind oder direkt geöffnet werden können. Konditionen auf Anfrage." data-en="The Innovation Package bundles three apps: AWAY (leave management), TRACE (time tracking internal &amp; external) and TeamRadar (real-time availability &amp; capacity). TeamRadar serves as the central platform with AWAY and TRACE embedded via app portal or opened directly. Pricing on request.">Bundle aus AWAY (Urlaubsplanung), TRACE (Zeiterfassung) und TeamRadar (Verfügbarkeit &amp; Auslastung). TeamRadar ist die zentrale Plattform mit eingebettetem App-Portal.</div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" data-de="Wie lange dauert die Einrichtung?" data-en="How long does setup take?">Wie lange dauert die Einrichtung?
+            <svg class="faq-chevron w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </button>
+          <div class="faq-answer" data-de="Für die Grundeinrichtung (Konto anlegen, Organisation erstellen, erste Vorlage hochladen) werden typischerweise unter 5 Minuten benötigt. Die Anbindung von Outlook oder Google Kalender per OAuth2 ist ein einmaliger Vorgang und dauert weitere 2–3 Minuten." data-en="Basic setup (create account, create organisation, upload first template) typically takes under 5 minutes. Connecting Outlook or Google Calendar via OAuth2 is a one-time step that takes another 2–3 minutes.">Grundeinrichtung unter 5 Minuten. OAuth2-Anbindung (Outlook/Google) einmalig 2–3 Minuten zusätzlich.</div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" data-de="Kann ich das Abo jederzeit kündigen?" data-en="Can I cancel the subscription anytime?">Kann ich das Abo jederzeit kündigen?
+            <svg class="faq-chevron w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </button>
+          <div class="faq-answer" data-de="Ja. Pro-Abos können monatlich gekündigt werden – keine Mindestlaufzeit. Nach der Kündigung wird dein Account automatisch auf Free zurückgestuft." data-en="Yes. Pro subscriptions can be cancelled monthly – no minimum term. After cancellation, your account is automatically downgraded to Free.">Ja, monatlich kündbar ohne Mindestlaufzeit. Nach Kündigung automatische Rückstufung auf Free.</div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" data-de="Wird AWAY mobil unterstützt?" data-en="Is AWAY supported on mobile?">Wird AWAY mobil unterstützt?
+            <svg class="faq-chevron w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </button>
+          <div class="faq-answer" data-de="AWAY ist als responsive Web-App (Next.js) gebaut und auf Desktop, Tablet und Smartphone nutzbar. Eine native App ist in der Roadmap. Über das TeamRadar App-Portal ist AWAY auch direkt in der TeamRadar-App verfügbar." data-en="AWAY is built as a responsive web app (Next.js) and usable on desktop, tablet and smartphone. A native app is on the roadmap. Via the TeamRadar app portal, AWAY is also available directly in the TeamRadar app.">AWAY ist eine responsive Web-App (Next.js) – nutzbar auf Desktop, Tablet und Smartphone. Native App in der Roadmap.</div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ FINAL CTA ══════════════════════════════════════════════ -->
+  <section style="background:#070b14;" class="py-28 relative overflow-hidden">
+    <div class="orb w-[500px] h-[500px] bg-indigo-700/20 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>
+    <div class="max-w-4xl mx-auto px-5 text-center relative z-10 reveal">
+      <div class="text-indigo-400 text-xs font-bold uppercase tracking-widest mb-5" data-de="Jetzt loslegen" data-en="Get started">Jetzt loslegen</div>
+      <h2 class="text-4xl md:text-6xl font-black text-white font-display tracking-tight mb-6"><span data-de="Bereit für strukturierte Urlaubsplanung?" data-en="Ready for structured leave management?">Bereit für strukturierte Urlaubsplanung?</span></h2>
+      <p class="text-white/45 text-lg mb-10 max-w-xl mx-auto" data-de="Jetzt kostenlos starten – kein Excel, kein E-Mail-Chaos, kein manuelles Kalenderpflegen." data-en="Start free now – no Excel, no email chaos, no manual calendar maintenance.">Jetzt kostenlos starten – kein Excel, kein E-Mail-Chaos, kein manuelles Kalenderpflegen.</p>
+      <div class="flex flex-wrap items-center gap-4 justify-center">
+        <a href="https://away-alpha.vercel.app/" target="_blank" rel="noopener" class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white px-8 py-4 rounded-2xl font-bold text-base transition-all shadow-xl shadow-indigo-900/40 active:scale-95" data-de="Kostenlos starten" data-en="Start free">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          <span data-de="Kostenlos starten" data-en="Start free">Kostenlos starten</span>
+        </a>
+        <a href="#showcase" class="inline-flex items-center gap-2 border border-white/15 hover:border-white/30 text-white/70 hover:text-white px-8 py-4 rounded-2xl font-bold text-base transition-all" data-de="App ansehen" data-en="See the app">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+          <span data-de="App ansehen" data-en="See the app">App ansehen</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ FOOTER ═════════════════════════════════════════════════ -->
+  <footer style="background:#04070d;border-top:1px solid rgba(255,255,255,0.06);" class="py-16">
+    <div class="max-w-7xl mx-auto px-5">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-10 mb-14">
+        <!-- Brand -->
         <div class="col-span-2 md:col-span-1">
-            <div class="flex items-center gap-2 mb-8">
-                <div class="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center">
-                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
-                </div>
-                <span class="text-xl font-bold tracking-tight text-slate-900 font-display">AWAY</span>
+          <div class="flex items-center gap-2.5 mb-5">
+            <div class="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center">
+              <svg class="w-4 h-4 text-white" viewBox="0 0 24 24" fill="currentColor"><path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></svg>
             </div>
-            <p class="text-slate-400 text-sm leading-relaxed">Der intelligente Urlaubsplaner für moderne Teams. Macht Urlaub zur schönsten Zeit des Jahres – auch in der Verwaltung.</p>
+            <span class="text-lg font-black text-white font-display tracking-tight">AWAY</span>
+          </div>
+          <p class="text-white/30 text-sm leading-relaxed mb-5" data-de="Der intelligente Urlaubsplaner für moderne Teams. Entwickelt von WAMOCON." data-en="The intelligent leave planner for modern teams. Developed by WAMOCON.">Der intelligente Urlaubsplaner für moderne Teams. Entwickelt von WAMOCON.</p>
+          <!-- Germany badge -->
+          <div class="flex items-center gap-2 text-white/25 text-xs font-semibold">
+            <span>🇩🇪</span>
+            <span data-de="Entwickelt in Deutschland" data-en="Made in Germany">Entwickelt in Deutschland</span>
+          </div>
         </div>
+
+        <!-- Product -->
         <div>
-            <h4 class="font-bold mb-6 uppercase text-xs tracking-widest text-slate-900">Produkt</h4>
-            <ul class="space-y-4 text-slate-500 text-sm">
-                <li><a href="#" class="hover:text-indigo-600 transition-colors">Features</a></li>
-                <li><a href="#" class="hover:text-indigo-600 transition-colors">Integrationen</a></li>
-                <li><a href="#" class="hover:text-indigo-600 transition-colors">Roadmap</a></li>
-                <li><a href="#" class="hover:text-indigo-600 transition-colors">Preise</a></li>
-            </ul>
+          <h4 class="text-white/50 text-xs font-bold uppercase tracking-widest mb-5" data-de="Produkt" data-en="Product">Produkt</h4>
+          <ul class="space-y-3 text-sm">
+            <li><a href="#features" class="text-white/35 hover:text-white transition-colors" data-de="Features" data-en="Features">Features</a></li>
+            <li><a href="#how" class="text-white/35 hover:text-white transition-colors" data-de="Wie es funktioniert" data-en="How it works">Wie es funktioniert</a></li>
+            <li><a href="#roi" class="text-white/35 hover:text-white transition-colors" data-de="ROI Rechner" data-en="ROI Calculator">ROI Rechner</a></li>
+            <li><a href="#pricing" class="text-white/35 hover:text-white transition-colors" data-de="Preise" data-en="Pricing">Preise</a></li>
+            <li><a href="#faq" class="text-white/35 hover:text-white transition-colors">FAQ</a></li>
+          </ul>
         </div>
+
+        <!-- Produktfamilie -->
         <div>
-            <h4 class="font-bold mb-6 uppercase text-xs tracking-widest text-slate-900">Unternehmen</h4>
-            <ul class="space-y-4 text-slate-500 text-sm">
-                <li><a href="#" class="hover:text-indigo-600 transition-colors">Über uns</a></li>
-                <li><a href="#" class="hover:text-indigo-600 transition-colors">Karriere</a></li>
-                <li><a href="#" class="hover:text-indigo-600 transition-colors">Blog</a></li>
-            </ul>
+          <h4 class="text-white/50 text-xs font-bold uppercase tracking-widest mb-5" data-de="Produktfamilie" data-en="Product family">Produktfamilie</h4>
+          <ul class="space-y-3 text-sm">
+            <li class="text-white/55 font-semibold flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-indigo-500"></span>AWAY
+            </li>
+            <li class="text-white/35 flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-teal-500"></span>TRACE
+              <span class="text-[10px] text-teal-400/60 font-semibold ml-1" data-de="Zeiterfassung" data-en="Time tracking">Zeiterfassung</span>
+            </li>
+            <li class="text-white/35 flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-blue-500"></span>TeamRadar
+              <span class="text-[10px] text-blue-400/60 font-semibold ml-1" data-de="Hub" data-en="Hub">Hub</span>
+            </li>
+          </ul>
         </div>
+
+        <!-- Rechtliches -->
         <div>
-            <h4 class="font-bold mb-6 uppercase text-xs tracking-widest text-slate-900">Rechtliches</h4>
-            <ul class="space-y-4 text-slate-500 text-sm">
-                <li><a href="impressum.html" class="hover:text-indigo-600 transition-colors">Impressum</a></li>
-                <li><a href="datenschutz.html" class="hover:text-indigo-600 transition-colors">Datenschutz</a></li>
-                <li><a href="agb.html" class="hover:text-indigo-600 transition-colors">AGB</a></li>
-            </ul>
+          <h4 class="text-white/50 text-xs font-bold uppercase tracking-widest mb-5" data-de="Rechtliches" data-en="Legal">Rechtliches</h4>
+          <ul class="space-y-3 text-sm">
+            <li><a href="impressum.html" class="text-white/35 hover:text-white transition-colors" data-de="Impressum" data-en="Imprint">Impressum</a></li>
+            <li><a href="datenschutz.html" class="text-white/35 hover:text-white transition-colors" data-de="Datenschutz" data-en="Privacy policy">Datenschutz</a></li>
+            <li><a href="agb.html" class="text-white/35 hover:text-white transition-colors" data-de="AGB" data-en="Terms">AGB</a></li>
+          </ul>
         </div>
-    </div>
-    <div class="max-w-7xl mx-auto px-6 mt-20 pt-12 border-t border-slate-100 flex flex-col items-center gap-8">
-        <!-- Developed in Germany Badge -->
-        <div class="flex flex-col items-center gap-3 group">
-            <svg width="44" height="44" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" class="drop-shadow-sm opacity-80 group-hover:opacity-100 transition-opacity">
-                <circle cx="100" cy="100" r="96" stroke="#0f172a" stroke-width="4" />
-                <circle cx="100" cy="100" r="86" stroke="#0f172a" stroke-width="2" opacity="0.2" />
-                <polygon points="100,28 106,46 124,46 110,56 115,74 100,64 85,74 90,56 76,46 94,46" fill="#6366f1" />
-                <path id="footerSealTextTop" d="M 30,100 A 70,70 0 0,1 170,100" fill="none" />
-                <text font-family="Outfit, sans-serif" font-size="18" font-weight="800" letter-spacing="4" fill="#0f172a">
-                    <textPath href="#footerSealTextTop" startOffset="50%" text-anchor="middle">ENTWICKELT IN</textPath>
-                </text>
-                <path id="footerSealTextBot" d="M 28,108 A 72,72 0 0,0 172,108" fill="none" />
-                <text font-family="Outfit, sans-serif" font-size="18" font-weight="800" letter-spacing="4" fill="#0f172a">
-                    <textPath href="#footerSealTextBot" startOffset="50%" text-anchor="middle">DEUTSCHLAND</textPath>
-                </text>
-                <rect x="70" y="82" width="60" height="8" rx="1" fill="#000" />
-                <rect x="70" y="90" width="60" height="8" fill="#DD0000" />
-                <rect x="70" y="98" width="60" height="8" rx="1" fill="#FFCC00" />
-            </svg>
-            <span class="text-[11px] font-bold tracking-widest text-slate-400 uppercase">Entwickelt in Deutschland</span>
+      </div>
+
+      <!-- Bottom bar -->
+      <div class="border-t border-white/6 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <p class="text-white/20 text-xs" data-de="© 2026 AWAY. Ein Produkt der WAMOCON GmbH. Alle Rechte vorbehalten." data-en="© 2026 AWAY. A product of WAMOCON GmbH. All rights reserved.">© 2026 AWAY. Ein Produkt der WAMOCON GmbH. Alle Rechte vorbehalten.</p>
+        <div class="flex items-center gap-2 text-white/15 text-xs">
+          <svg class="w-3.5 h-3.5 text-emerald-500" fill="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/></svg>
+          <span data-de="Alle Systeme betriebsbereit" data-en="All systems operational">Alle Systeme betriebsbereit</span>
         </div>
-        
-        <div class="w-full flex flex-col md:flex-row justify-between items-center gap-4">
-            <p class="text-slate-400 text-xs">© 2024 AWAY. Ein Produkt von WAMOCON.</p>
-            <div class="flex gap-6">
-                <!-- Social Icons -->
-                <div class="w-5 h-5 bg-slate-200 rounded-full"></div>
-                <div class="w-5 h-5 bg-slate-200 rounded-full"></div>
-                <div class="w-5 h-5 bg-slate-200 rounded-full"></div>
-            </div>
-        </div>
+      </div>
     </div>
   </footer>
+
+  <!-- ═══ KONTAKTFORMULAR MODAL ════════════════════════════════ -->
+  <div id="contact-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title"
+       class="fixed inset-0 z-[300] flex items-center justify-center p-4"
+       style="display:none; background:rgba(4,7,13,0.82); backdrop-filter:blur(10px);">
+    <div class="bg-white rounded-3xl shadow-2xl w-full max-w-lg" style="max-height:92vh;overflow-y:auto;">
+
+      <!-- Letterhead Header (WAMOCON-Stil) -->
+      <div class="flex items-start justify-between px-8 pt-7 pb-5 border-b border-slate-100">
+        <div>
+          <div class="flex items-center gap-2.5 mb-1.5">
+            <div class="w-7 h-7 bg-indigo-600 rounded-lg flex items-center justify-center shrink-0">
+              <svg class="w-4 h-4 text-white" viewBox="0 0 24 24" fill="currentColor"><path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></svg>
+            </div>
+            <span class="font-black text-slate-900 font-display tracking-tight">AWAY</span>
+            <span class="text-slate-300 mx-1">|</span>
+            <span class="text-sm font-bold text-slate-500">WAMOCON GmbH</span>
+          </div>
+          <p class="text-xs text-slate-400 pl-9">Mergenthalerallee 79–81 · 65760 Eschborn</p>
+        </div>
+        <button onclick="closeContactModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-500 hover:text-slate-700 transition-colors shrink-0 mt-0.5" aria-label="Schließen">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <!-- Form Body -->
+      <div class="px-8 py-7">
+        <h3 id="modal-title" class="text-xl font-bold text-slate-900 font-display mb-1">Beratung anfragen</h3>
+        <p class="text-slate-400 text-sm mb-7">AWAY Innovation Package oder allgemeine Produktanfrage</p>
+
+        <form id="contact-form" onsubmit="submitContactForm(event)" novalidate class="space-y-4">
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5" for="cf-name">Name *</label>
+              <input id="cf-name" type="text" required autocomplete="name"
+                class="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
+                placeholder="Max Müller">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5" for="cf-email">E-Mail *</label>
+              <input id="cf-email" type="email" required autocomplete="email"
+                class="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
+                placeholder="max@unternehmen.de">
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5" for="cf-company">Unternehmen</label>
+            <input id="cf-company" type="text" autocomplete="organization"
+              class="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
+              placeholder="Musterfirma GmbH">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5" for="cf-subject">Betreff</label>
+            <select id="cf-subject"
+              class="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition bg-white">
+              <option value="Innovation Package Anfrage">Innovation Package Anfrage</option>
+              <option value="AWAY Pro – Beratung">AWAY Pro – Beratung</option>
+              <option value="Demo anfragen">Demo anfragen</option>
+              <option value="Allgemeine Anfrage">Allgemeine Anfrage</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5" for="cf-message">Nachricht *</label>
+            <textarea id="cf-message" required rows="4"
+              class="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition resize-none"
+              placeholder="Wie können wir helfen? Anzahl Mitarbeiter, aktuelle Herausforderung ..."></textarea>
+          </div>
+
+          <div id="cf-error" class="hidden text-sm text-red-500 font-medium">Bitte Name, E-Mail und Nachricht ausfüllen.</div>
+
+          <button type="submit"
+            class="w-full bg-indigo-600 hover:bg-indigo-500 text-white py-3.5 rounded-xl font-bold text-sm transition-all shadow-lg shadow-indigo-100 active:scale-95 flex items-center justify-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+            Anfrage senden
+          </button>
+          <p class="text-center text-xs text-slate-400">Es öffnet sich dein E-Mail-Programm mit der vorausgefüllten Anfrage.</p>
+        </form>
+      </div>
+    </div>
+  </div>
 
   <script src="script.js"></script>
 </body>

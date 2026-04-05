@@ -6,7 +6,9 @@
     "start": "python -m http.server 8080",
     "dev": "python -m http.server 8081",
     "lint": "htmlhint *.html",
-    "test": "npm run lint",
+    "test:lint": "npm run lint",
+    "test:validate": "node tests/validate.js",
+    "test": "npm run test:lint && npm run test:validate",
     "build": "echo 'No build step required for static LP'"
   },
   "devDependencies": {
