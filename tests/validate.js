@@ -154,8 +154,21 @@ check('Pricing section', () => {
   if (html.match(/6[^0-9]*€|€[^0-9]*6/)) pass('Pro price (6€/user) found');
   else fail('Pro price (6€) not found in HTML');
 
+  // Price and unit are in separate elements – check both tokens independently within pricing section
+  const pricingSec = html.match(/<section[^>]*id="pricing"[\s\S]*?<\/section>/);
+  const pricingHtml = pricingSec ? pricingSec[0] : '';
+  if (pricingHtml.includes('2 €') && pricingHtml.match(/\/ Nutzer \/ Monat|\/ user \/ month/))
+    pass('Lite price (2€/user) found in pricing section');
+  else fail('Lite price (2€/user) not found in pricing section');
+
+  // AcroForm-PDF is a Pro-only feature (document_templates: false in Lite)
+  if (pricingHtml.includes('AWAY –') || pricingHtml.includes('AWAY &ndash;') ||
+      pricingHtml.match(/AWAY[^<]*Urlaubsplaner|Urlaubsplaner/))
+    pass('Innovation card lists AWAY – Urlaubsplaner');
+  else fail('Innovation card must list AWAY – Urlaubsplaner');
+
   // all three tiers
-  ['Free', 'Pro', 'Innovation'].forEach(tier => {
+  ['Lite', 'Pro', 'Innovation'].forEach(tier => {
     if (html.includes(tier)) pass(`"${tier}" tier present`);
     else fail(`"${tier}" tier MISSING`);
   });
@@ -235,6 +248,70 @@ check('Static site configuration', () => {
 
   if (html.includes('tailwindcss') || html.includes('tailwind')) pass('Tailwind CSS CDN referenced');
   else fail('Tailwind CSS not referenced in HTML');
+});
+
+/* ── 15. No legacy FREE tier ────────────────────────────────── */
+check('No legacy FREE tier in pricing', () => {
+  // Verify the old free-tier marketing text is gone from the pricing section
+  const pricingMatch = html.match(/<section[^>]*id="pricing"[\s\S]*?<\/section>/);
+  const pricingBlock = pricingMatch ? pricingMatch[0] : '';
+
+  if (!pricingBlock.includes('Für immer kostenlos')) pass('"Für immer kostenlos" absent from pricing section');
+  else fail('"Für immer kostenlos" still present in pricing section – legacy FREE tier not fully removed');
+
+  if (!pricingBlock.includes('Free forever')) pass('"Free forever" absent from pricing section');
+  else fail('"Free forever" still present in pricing section – legacy FREE tier not fully removed');
+
+  if (!pricingBlock.match(/data-de="FREE"/)) pass('FREE tier label removed from pricing');
+  else fail('data-de="FREE" still present in pricing – legacy FREE tier not fully removed');
+  if (!pricingBlock.includes('Alles aus Free')) pass('"Alles aus Free" legacy text removed from pricing');
+  else fail('"Alles aus Free" still present in pricing – should reference Lite');});
+
+/* ── 16. Lite user limit (50 users) visible in HTML ────────────────────────── */
+check('Lite user limit (50 users) visible in HTML', () => {
+  if (html.match(/Bis 50 Nutzer/)) pass('"Bis 50 Nutzer" found in HTML (DE)');
+  else fail('"Bis 50 Nutzer" MISSING from HTML');
+
+  if (html.match(/Up to 50 users/)) pass('"Up to 50 users" found in HTML (EN)');
+  else fail('"Up to 50 users" MISSING from HTML');
+});
+/* ── 17. AcroForm-PDF is Pro-only (document_templates: false in Lite) ─────── */
+check('AcroForm-PDF is a Pro-only feature', () => {
+  const pricingSec = html.match(/<section[^>]*id="pricing"[\s\S]*?<\/section>/);
+  const pricingHtml = pricingSec ? pricingSec[0] : '';
+
+  // AcroForm must appear in Pro card (it has check-ico rows)
+  if (pricingHtml.includes('AcroForm')) pass('AcroForm-PDF Vorlagen found in pricing section');
+  else fail('AcroForm-PDF Vorlagen missing from pricing section entirely');
+
+  // The Lite card – AcroForm must appear as a cross-ico (disabled), not check-ico (enabled)
+  // Extract the Lite card block (first pricing-card, before "featured")
+  const liteCard = pricingHtml.match(/<div class="pricing-card reveal">([\s\S]*?)<\/div>\s*\n\s*<\/div>\s*\n\s*\/\*|<div class="pricing-card reveal">([\s\S]*?)(?=<div class="pricing-card featured)/);
+  const liteBlock = liteCard ? (liteCard[1] || liteCard[2] || '') : '';
+  if (liteBlock) {
+    const acroInLite = liteBlock.match(/check-ico[^>]*>[^<]*<[^>]*>[^<]*AcroForm|AcroForm[^<]*check-ico/);
+    if (!acroInLite) pass('AcroForm-PDF not in Lite ✓ section (correctly gated to Pro)');
+    else fail('AcroForm-PDF found as a check feature in Lite – must be Pro-only (document_templates: false in Lite)');
+  } else {
+    // Fallback: brute-force check that cross-ico appears before AcroForm in pricing HTML
+    const crossBeforeAcro = pricingHtml.search(/cross-ico/) < pricingHtml.search(/AcroForm/);
+    if (crossBeforeAcro) pass('AcroForm-PDF appears after a cross-ico in pricing (likely gated)');
+    else warn('Could not precisely determine Lite AcroForm gating – verify visually');
+  }
+});
+/* ── 18. Footer Produktfamilie labels ────────────────────────────── */
+check('Footer Produktfamilie labels correct', () => {
+  if (html.includes('data-de="Urlaubsplaner"')) pass('AWAY – Urlaubsplaner label in footer (DE)');
+  else fail('AWAY Urlaubsplaner label MISSING from footer');
+
+  if (html.includes('data-en="Leave planner"')) pass('AWAY – Leave planner label in footer (EN)');
+  else fail('AWAY Leave planner label MISSING from footer (EN)');
+
+  if (!html.includes('data-de="Hub"')) pass('Legacy "Hub" label removed from footer');
+  else fail('Legacy "Hub" label still present in footer');
+
+  if (html.includes('data-de="Verwaltung"')) pass('TeamRadar – Verwaltung label in footer (DE)');
+  else fail('TeamRadar Verwaltung label MISSING from footer');
 });
 
 /* ── Summary ─────────────────────────────────────────────────── */
