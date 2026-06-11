@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+﻿#!/usr/bin/env node
 /**
  * AWAY Landing Page – Automated Integrity Checks
  * ────────────────────────────────────────────────
@@ -92,7 +92,7 @@ check('No DOCX/XLSX content (AcroForm-PDF only)', () => {
 
 /* ── 5. Production CTA links ────────────────────────────────── */
 check('CTA buttons point to production URL', () => {
-  const PROD = 'https://away-alpha.vercel.app/';
+  const PROD = 'https://www.aiaway.de/';
   const count = (html.match(/https:\/\/away-alpha\.vercel\.app\//g) || []).length;
   if (count >= 5) pass(`Production URL referenced ${count}× in HTML (≥5 required)`);
   else fail(`Production URL only referenced ${count}× – expected ≥ 5`);
